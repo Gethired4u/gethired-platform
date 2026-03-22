@@ -16,7 +16,7 @@ function Navbar() {
     <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-lg">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link to="/" className="font-display text-lg font-bold tracking-tight text-ink">
-          JobCrack <span className="gradient-text">AI</span>
+          GetHired4U <span className="gradient-text">AI</span>
         </Link>
 
         <button
