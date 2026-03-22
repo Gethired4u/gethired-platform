@@ -82,3 +82,20 @@ ls
 cd backend/
 ls
 cd ../
+cd backend/
+ls
+python3 -m venv venv
+sudo apt install python3-venv -y
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python3 main.py
+uvicorn main:app --host 0.0.0.0 --port 8000
+ps aux | grep uvicorn
+cd backend/
+uvicorn main:app --host 0.0.0.0 --port 8000
+sudo apt install certbot python3-certbot-nginx -y
+ls
