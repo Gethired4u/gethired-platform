@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply m-0 bg-soft text-ink font-sans;
+  background-image: radial-gradient(circle at 20% 0%, rgba(14, 165, 233, 0.15) 0, transparent 28%),
+    radial-gradient(circle at 82% 20%, rgba(6, 182, 212, 0.15) 0, transparent 25%);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.glass {
+  @apply border border-white/50 bg-white/70 backdrop-blur-md;
+}
+
+.gradient-text {
+  background: linear-gradient(120deg, #0369a1 0%, #0ea5e9 45%, #0f766e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.premium-sheen {
+  background: linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 70%);
+  background-size: 200% 100%;
+  pointer-events: none;
+}
+
+.review-marquee {
+  width: max-content;
+  animation: reviewMarquee 58s linear infinite;
+}
+
+.review-marquee-reverse {
+  animation-direction: reverse;
+  animation-duration: 66s;
+}
+
+.review-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes reviewMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .review-marquee {
+    animation: none;
+  }
+}
