@@ -63,3 +63,22 @@ ls
 rm backend/
 rm -rf backend
 ls
+sudo apt update
+sudo apt install nginx -y
+sudo systemctl start nginx
+ls
+cd platform/
+ls
+cd backend/
+ls
+cd ../
+rm -rf backend
+ls
+cd ../
+cd platform/
+ls
+cd ../
+ls
+cd backend/
+ls
+cd ../
