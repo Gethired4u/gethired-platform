@@ -99,3 +99,15 @@ cd backend/
 uvicorn main:app --host 0.0.0.0 --port 8000
 sudo apt install certbot python3-certbot-nginx -y
 ls
+sudo tail -n 50 /var/log/nginx/error.log
+sudo chmod -R 755 /home/ubuntu
+ls ~/frontend/dist
+sudo systemctl restart nginx
+sudo nano /etc/nginx/sites-available/default
+sudo systemctl restart nginx
+sudo certbot --nginx
+sudo killall certbot
+sudo rm -rf /var/lib/letsencrypt/.lock
+sudo rm -rf /var/log/letsencrypt/.lock
+sudo rm -rf /var/run/letsencrypt/.lock
+sudo certbot --nginx
