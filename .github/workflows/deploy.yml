@@ -23,7 +23,6 @@ jobs:
             cd frontend
             npm install
             npm run build
-            npm run build
             sudo rm -rf /var/www/html/*
             sudo cp -r dist/* /var/www/html/
 
