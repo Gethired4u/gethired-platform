@@ -19,8 +19,17 @@ export async function registerUser(payload) {
   return response.data;
 }
 
-export async function fetchUsers() {
-  const response = await api.get("/users");
+export async function loginAdmin(credentials) {
+  const response = await api.post("/admin/login", credentials);
+  return response.data;
+}
+
+export async function fetchUsers(token) {
+  const response = await api.get("/users", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data;
 }
 

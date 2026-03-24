@@ -6,7 +6,7 @@ const links = [
   { to: "/services", label: "Services" },
   { to: "/resume-check", label: "Resume Check" },
   { to: "/register", label: "Register" },
-  { to: "/admin", label: "Admin" },
+  // Admin link intentionally hidden; access by URL only.
 ];
 
 function Navbar() {

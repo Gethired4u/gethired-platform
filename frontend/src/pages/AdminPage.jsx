@@ -4,21 +4,25 @@ import { fetchUsers } from "../services/api";
 
 function AdminPage() {
   const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [token, setToken] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const loadUsers = useCallback(async () => {
     setError("");
     setIsLoading(true);
     try {
-      const data = await fetchUsers();
+      const data = await fetchUsers(token);
       setUsers(data);
     } catch (apiError) {
       setError(apiError?.response?.data?.detail || "Unable to load users.");
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     loadUsers();
