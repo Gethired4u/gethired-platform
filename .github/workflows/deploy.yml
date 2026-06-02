@@ -34,7 +34,14 @@ jobs:
 
             cd $PROJECT_DIR
 
-            # ── Step 2: Backend — create venv if missing, then install ────
+            # ── Step 2: Free up disk space ────────────────────────────────
+            echo "=== Cleaning disk space ==="
+            sudo apt-get clean -qq
+            pip3 cache purge 2>/dev/null || true
+            npm cache clean --force 2>/dev/null || true
+            df -h / | tail -1
+
+            # ── Step 4: Backend — create venv if missing, then install ────
             echo "=== Setting up backend ==="
             cd $PROJECT_DIR/backend
             if [ ! -d "venv" ]; then
