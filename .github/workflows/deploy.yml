@@ -17,34 +17,50 @@ jobs:
           username: ${{ secrets.GETHIRED4U_EC2_USER }}
           key: ${{ secrets.GETHIRED4U_EC2_SSH_KEY }}
           script: |
-            set -e   # stop immediately if any command fails
+            set -e
 
             PROJECT_DIR=~/gethired-platform
+            REPO_URL=https://github.com/Gethired4u/gethired-platform.git
 
-            echo "=== Pulling latest code ==="
+            # ── Step 1: Clone repo if first time, otherwise pull ──────────
+            if [ ! -d "$PROJECT_DIR" ]; then
+              echo "=== First deploy — cloning repo ==="
+              git clone $REPO_URL $PROJECT_DIR
+            else
+              echo "=== Pulling latest code ==="
+              cd $PROJECT_DIR
+              git pull origin main
+            fi
+
             cd $PROJECT_DIR
-            git pull origin main
 
-            echo "=== Updating backend dependencies ==="
+            # ── Step 2: Backend — create venv if missing, then install ────
+            echo "=== Setting up backend ==="
             cd $PROJECT_DIR/backend
+            if [ ! -d "venv" ]; then
+              echo "--- Creating Python virtual environment ---"
+              python3 -m venv venv
+            fi
+            ./venv/bin/pip install --upgrade pip --quiet
             ./venv/bin/pip install -r requirements.txt --quiet
 
+            # ── Step 3: Frontend — install and build ──────────────────────
             echo "=== Building frontend ==="
             cd $PROJECT_DIR/frontend
             npm ci --prefer-offline --silent
             npm run build
 
-            echo "=== Deploying frontend to Nginx root ==="
+            # ── Step 4: Deploy frontend to Nginx root ─────────────────────
+            echo "=== Deploying to /var/www/html ==="
             sudo rm -rf /var/www/html/*
             sudo cp -r dist/* /var/www/html/
 
-            echo "=== Restarting backend service ==="
-            sudo systemctl restart gethired-backend
-
-            echo "=== Reloading Nginx ==="
+            # ── Step 5: Restart services ──────────────────────────────────
+            echo "=== Restarting services ==="
+            sudo systemctl restart gethired-backend || true
             sudo systemctl reload nginx
 
             echo ""
             echo "Deployment complete ✅"
-            echo "Backend: $(sudo systemctl is-active gethired-backend)"
+            echo "Backend: $(sudo systemctl is-active gethired-backend 2>/dev/null || echo 'not configured')"
             echo "Nginx:   $(sudo systemctl is-active nginx)"
