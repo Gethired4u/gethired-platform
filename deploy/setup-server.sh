@@ -47,9 +47,14 @@ echo ">>> Deploying frontend..."
 sudo rm -rf /var/www/html/*
 sudo cp -r dist/* /var/www/html/
 
-# ── 7. Nginx config ───────────────────────────────────────────────────────
+# ── 7. Nginx config — only install if SSL certs don't exist yet ───────────
 echo ">>> Configuring Nginx..."
-sudo cp $PROJECT_DIR/deploy/nginx.conf /etc/nginx/sites-available/gethired4u
+if [ ! -f "/etc/letsencrypt/live/gethired4u.com/fullchain.pem" ]; then
+  echo "--- SSL not found, installing HTTP-only config first ---"
+  sudo cp $PROJECT_DIR/deploy/nginx.conf /etc/nginx/sites-available/gethired4u
+else
+  echo "--- SSL cert exists, keeping current Nginx config ---"
+fi
 sudo ln -sf /etc/nginx/sites-available/gethired4u /etc/nginx/sites-enabled/gethired4u
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
