@@ -65,7 +65,8 @@ jobs:
             # ── Step 5: Restart services ──────────────────────────────────
             echo "=== Restarting services ==="
             sudo systemctl restart gethired-backend || true
-            sudo systemctl reload nginx
+            # Only reload nginx — never overwrite its config (SSL certs managed by Certbot)
+            sudo systemctl reload nginx || true
 
             echo ""
             echo "Deployment complete ✅"
