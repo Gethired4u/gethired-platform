@@ -1,3 +1,4 @@
+import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
 
 function ReviewCard({ review }) {
@@ -16,10 +17,16 @@ function ReviewCard({ review }) {
 }
 
 function ReviewMarquee({ reviews }) {
-  const rowOne = reviews.slice(0, Math.ceil(reviews.length / 2));
-  const rowTwo = reviews.slice(Math.ceil(reviews.length / 2));
-  const rowOneLoop = [...rowOne, ...rowOne];
-  const rowTwoLoop = [...rowTwo, ...rowTwo];
+  const { rowOneLoop, rowTwoLoop } = useMemo(() => {
+    const midpoint = Math.ceil(reviews.length / 2);
+    const rowOne = reviews.slice(0, midpoint);
+    const rowTwo = reviews.slice(midpoint);
+
+    return {
+      rowOneLoop: [...rowOne, ...rowOne],
+      rowTwoLoop: [...rowTwo, ...rowTwo],
+    };
+  }, [reviews]);
 
   return (
     <section className="px-4 py-14 sm:px-6 lg:px-8">
@@ -59,4 +66,4 @@ function ReviewMarquee({ reviews }) {
   );
 }
 
-export default ReviewMarquee;
+export default memo(ReviewMarquee);

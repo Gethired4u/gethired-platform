@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 function SectionHeading({ eyebrow, title, description }) {
   return (
     <div className="mx-auto max-w-3xl text-center">
@@ -8,4 +10,4 @@ function SectionHeading({ eyebrow, title, description }) {
   );
 }
 
-export default SectionHeading;
+export default memo(SectionHeading);

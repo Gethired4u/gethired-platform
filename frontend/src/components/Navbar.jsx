@@ -1,73 +1,25 @@
-import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useEffect, useState } from 'react'
 
-const links = [
-  { to: "/", label: "Home" },
-  { to: "/services", label: "Services" },
-  { to: "/resume-check", label: "Resume Check" },
-  { to: "/register", label: "Register" },
-  // Admin link intentionally hidden; access by URL only.
-];
+const WASvg = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.534 5.862L0 24l6.335-1.524A11.947 11.947 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.928 0-3.745-.516-5.307-1.418l-.38-.225-3.76.904.936-3.653-.247-.396A9.935 9.935 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+  </svg>
+)
 
-function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-
+export default function Navbar() {
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-lg">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link to="/" className="font-display text-lg font-bold tracking-tight text-ink">
-          GetHired4U<span className="gradient-text">AI</span>
-        </Link>
-
-        <button
-          type="button"
-          className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-semibold md:hidden"
-          onClick={() => setIsOpen((prev) => !prev)}
-        >
-          Menu
-        </button>
-
-        <nav className="hidden items-center gap-7 md:flex">
-          {links.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={({ isActive }) =>
-                `text-sm font-semibold transition-colors ${isActive ? "text-brand-600" : "text-slate hover:text-ink"}`
-              }
-            >
-              {link.label}
-            </NavLink>
-          ))}
-          <Link
-            to="/register"
-            className="rounded-xl bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-          >
-            Get Started
-          </Link>
-        </nav>
+    <nav id="topnav">
+      <div className="nav-inner">
+        <div className="logo">GetHired<span>4U</span></div>
+        <div className="nav-right">
+          <a href="#form" className="btn-primary nav-cta" style={{padding:'9px 20px',fontSize:'13px'}}>Get Started ₹1</a>
+          <a href="https://wa.me/919999999999" className="nav-wa-btn" target="_blank" rel="noreferrer">
+            <WASvg />
+            WhatsApp
+          </a>
+        </div>
       </div>
-
-      {isOpen && (
-        <nav className="border-t border-slate-200 bg-white px-4 py-3 md:hidden">
-          <div className="flex flex-col gap-3">
-            {links.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                onClick={() => setIsOpen(false)}
-                className={({ isActive }) =>
-                  `text-sm font-semibold ${isActive ? "text-brand-600" : "text-slate"}`
-                }
-              >
-                {link.label}
-              </NavLink>
-            ))}
-          </div>
-        </nav>
-      )}
-    </header>
-  );
+    </nav>
+  )
 }
-
-export default Navbar;

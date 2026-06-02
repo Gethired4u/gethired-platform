@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gethired4u.in/sitemap.xml

@@ -1,14 +1,12 @@
-import Footer from "./Footer";
-import Navbar from "./Navbar";
+import Navbar from './Navbar'
+import Footer from './Footer'
 
-function Layout({ children }) {
+export default function Layout({ children }) {
   return (
-    <div className="min-h-screen">
+    <>
       <Navbar />
       <main>{children}</main>
       <Footer />
-    </div>
-  );
+    </>
+  )
 }
-
-export default Layout;

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -38,4 +39,4 @@ function ServiceCard({ icon, title, description, highlights = [], badge, linkTo,
   );
 }
 
-export default ServiceCard;
+export default memo(ServiceCard);
