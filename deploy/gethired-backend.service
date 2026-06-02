@@ -1,0 +1,17 @@
+[Unit]
+Description=GetHired4U FastAPI Backend
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/gethired-platform/backend
+Environment="PATH=/home/ubuntu/gethired-platform/backend/venv/bin"
+ExecStart=/home/ubuntu/gethired-platform/backend/venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000 --workers 2
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

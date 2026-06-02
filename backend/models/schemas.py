@@ -8,6 +8,9 @@ class UserRegistration(BaseModel):
     experience: str = Field(..., min_length=1, max_length=120)
     role: str = Field(..., min_length=1, max_length=120)
     services_interested: list[str] = Field(default_factory=list)
+    lead_source: str = Field(default="web", max_length=120)
+    recommended_plan: str | None = Field(default=None, max_length=160)
+    quiz_answers: dict[str, str] = Field(default_factory=dict)
 
 
 class UserRecord(BaseModel):
@@ -18,7 +21,15 @@ class UserRecord(BaseModel):
     experience: str
     role: str
     services_interested: list[str]
+    lead_source: str = "web"
+    recommended_plan: str | None = None
+    quiz_answers: dict[str, str] = Field(default_factory=dict)
     created_at: str
+    # CRM fields
+    status: str = "new"
+    notes: str | None = None
+    contacted_at: str | None = None
+    converted_at: str | None = None
 
 
 class RegistrationResponse(BaseModel):
@@ -32,8 +43,34 @@ class ResumeIssue(BaseModel):
     detail: str
 
 
+class SuggestedKeyword(BaseModel):
+    keyword: str
+    relevance: float
+
+
 class ResumeAnalysisResponse(BaseModel):
-    ats_score: int
+    ats_score: float
     summary: str
     issues: list[ResumeIssue]
+    strengths: list[str] = []
+    component_scores: dict[str, float] = {}
+    strength_heatmap: list[dict] = []
     suggested_keywords: list[str]
+    suggested_keywords_relevance: list[SuggestedKeyword] = []
+    # Position-specific gap analysis
+    position_requirements: list[str] = []
+    missing_requirements: list[str] = []
+    experience_fit: str = ""
+    format_feedback: list[str] = []
+
+
+class AnalysisHistory(BaseModel):
+    id: int
+    created_at: str
+    job_description: str
+    ats_score: float
+    component_scores: dict[str, float]
+    strengths: list[str]
+    issues: list[str]
+    suggested_keywords: list[str]
+    suggested_keywords_relevance: list[SuggestedKeyword]
