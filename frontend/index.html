@@ -38,8 +38,14 @@
 {"@context":"https://schema.org","@type":"Service","name":"Resume ATS Check","serviceType":"Resume Review","provider":{"@type":"Organization","name":"GetHired4U"},"areaServed":"IN","offers":{"@type":"Offer","price":"1","priceCurrency":"INR","description":"ATS resume check and job-readiness diagnosis for Indian job seekers"}}
 </script>
 
-<!-- ── Google Tag Manager — replace GTM-XXXXXXX with your container ID ──── -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=G-C2K1HNM7TJ'+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+<!-- ── Google Analytics 4 ────────────────────────────────────────────────── -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C2K1HNM7TJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-C2K1HNM7TJ');
+</script>
 
 <!-- ── Razorpay Payment SDK ──────────────────────────────────────────────── -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -530,8 +536,6 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
 </style>
 </head>
 <body>
-<!-- GTM noscript fallback -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- FLOATING WA BUBBLE -->
 <a href="#form" class="wa-bubble js-whatsapp-link" data-wa-context="floating" title="Chat on WhatsApp">
