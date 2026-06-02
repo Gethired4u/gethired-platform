@@ -1470,7 +1470,12 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
 <script>
 const CONTACT_EMAIL = 'hello@gethired4u.in';
 const CONTACT_WHATSAPP_NUMBER = '918328221007';
-const API_BASE_URL = window.GH_API_BASE_URL || 'http://localhost:8000';
+// On production (gethired4u.com) use relative URLs — Nginx proxies them to backend.
+// On localhost use the dev backend directly.
+const API_BASE_URL = window.GH_API_BASE_URL ||
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000'
+    : '');
 
 // ── Analytics helper ───────────────────────────────────────────────────────
 function trackEvent(name, params){
