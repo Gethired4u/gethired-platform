@@ -18,7 +18,7 @@ export async function analyzeResume(formData) {
 }
 
 export async function registerUser(payload) {
-  const response = await api.post("/register-lead", payload);
+  const response = await api.post("/register", payload);
   return response.data;
 }
 

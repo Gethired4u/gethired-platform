@@ -6,7 +6,7 @@ from services.db import create_user
 router = APIRouter(tags=["registration"])
 
 
-@router.post("/register-lead", response_model=RegistrationResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/register", response_model=RegistrationResponse, status_code=status.HTTP_201_CREATED)
 def register_user(payload: UserRegistration) -> RegistrationResponse:
     user_id = create_user(payload)
     return RegistrationResponse(
