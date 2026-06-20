@@ -2031,7 +2031,28 @@ async function handleFormSubmit(){
     }
   }
 
-  // ── Step 3: Track + open WhatsApp ────────────────────────────────────────
+  // ── Step 3: Save lead to database ────────────────────────────────────────
+  try {
+    await fetch(API_BASE_URL + '/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name:               name,
+        email:              email,
+        phone:              phone,
+        experience:         'Not specified',
+        role:               role,
+        services_interested: service ? [service] : [],
+        lead_source:        'home_page_static',
+        recommended_plan:   service || null,
+        quiz_answers:       {}
+      })
+    });
+  } catch(e) {
+    // Silently continue — WhatsApp flow must not be blocked by API errors
+  }
+
+  // ── Step 4: Track + open WhatsApp ────────────────────────────────────────
   trackEvent('form_submit', {service, price, has_resume: !!file, payment_done: !!paymentId});
 
   const message = [

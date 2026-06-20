@@ -11,6 +11,7 @@ from jose import JWTError, jwt
 from pydantic import BaseModel, Field
 
 from services.db import delete_user, get_setting, list_analysis_history, list_users, set_setting, update_lead, VALID_STATUSES
+from services.emailer import test_smtp_connection
 
 logger = logging.getLogger(__name__)
 
@@ -213,3 +214,11 @@ def set_offer(
         return _parse_offer_status(end_iso)
 
     raise HTTPException(status_code=400, detail="Provide hours, end_time, or clear=true.")
+
+
+@router.get("/admin/test-email")
+def test_email(_: dict[str, Any] = Depends(verify_admin_token)) -> dict:
+    result = test_smtp_connection()
+    if not result["ok"]:
+        raise HTTPException(status_code=503, detail=result["error"])
+    return result
