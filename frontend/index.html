@@ -56,8 +56,6 @@
   gtag('config', 'G-C2K1HNM7TJ');
 </script>
 
-<!-- ── Razorpay Payment SDK ──────────────────────────────────────────────── -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;1,14..32,400&display=swap" rel="stylesheet">
@@ -1434,54 +1432,6 @@ function trackEvent(name, params){
   } catch(e){}
 }
 
-// ── Razorpay helpers ───────────────────────────────────────────────────────
-function getServicePrice(serviceName){
-  const m = serviceName.match(/₹([\d,]+)/);
-  return m ? parseInt(m[1].replace(/,/g,''), 10) : 1;
-}
-
-async function openRazorpayCheckout(serviceName, price, onSuccess){
-  try{
-    const res = await fetch(API_BASE_URL + '/payment/create-order', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({amount: price, service_name: serviceName})
-    });
-    if(!res.ok){
-      const err = await res.json().catch(()=>({}));
-      throw new Error(err.detail || 'Payment gateway not configured');
-    }
-    const order = await res.json();
-    return new Promise((resolve, reject) => {
-      const rzp = new Razorpay({
-        key: order.key_id,
-        amount: order.amount * 100,
-        currency: 'INR',
-        name: 'GetHired4U',
-        description: serviceName,
-        order_id: order.order_id,
-        theme: { color: '#00e676' },
-        handler: function(response){
-          trackEvent('payment_success', {service: serviceName, amount: price});
-          onSuccess(response.razorpay_payment_id);
-          resolve(response);
-        },
-        modal: { ondismiss: () => reject(new Error('CANCELLED')) }
-      });
-      rzp.on('payment.failed', function(r){
-        trackEvent('payment_failed', {service: serviceName, reason: r.error.reason});
-        reject(new Error(r.error.description || 'Payment failed'));
-      });
-      rzp.open();
-      trackEvent('payment_initiated', {service: serviceName, amount: price});
-    });
-  } catch(e){
-    if(e.message === 'CANCELLED') throw e;
-    // Gateway not configured or network error — warn but let flow continue
-    console.warn('Razorpay:', e.message);
-    return null;
-  }
-}
 
 function contactByEmail(subject, body){
   const url = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -1907,26 +1857,7 @@ async function handleFormSubmit(){
     if(submitBtn){ submitBtn.disabled = false; submitBtn.innerHTML = '🔒 Submit & Get Started'; }
   }
 
-  // ── Step 2: Razorpay payment for paid services ───────────────────────────
-  const price = getServicePrice(service);
-  let paymentId = null;
-
-  if(price > 1){
-    if(submitBtn){ submitBtn.disabled = true; submitBtn.innerHTML = '💳 Opening payment...'; }
-    try{
-      await openRazorpayCheckout(service, price, (pid) => { paymentId = pid; });
-    } catch(e){
-      if(e.message === 'CANCELLED'){
-        if(submitBtn){ submitBtn.disabled = false; submitBtn.innerHTML = '🔒 Submit & Get Started'; }
-        return; // User cancelled payment — stop here
-      }
-      // Gateway not configured — continue to WhatsApp without payment
-    } finally {
-      if(submitBtn){ submitBtn.disabled = false; submitBtn.innerHTML = '🔒 Submit & Get Started'; }
-    }
-  }
-
-  // ── Step 3: Save lead to database ────────────────────────────────────────
+  // ── Step 2: Save lead to database ────────────────────────────────────────
   try {
     await fetch(API_BASE_URL + '/register', {
       method: 'POST',
@@ -1947,8 +1878,8 @@ async function handleFormSubmit(){
     // Silently continue — WhatsApp flow must not be blocked by API errors
   }
 
-  // ── Step 4: Track + open WhatsApp ────────────────────────────────────────
-  trackEvent('form_submit', {service, price, has_resume: !!file, payment_done: !!paymentId});
+  // ── Step 3: Track + open WhatsApp ────────────────────────────────────────
+  trackEvent('form_submit', {service, has_resume: !!file});
 
   const message = [
     'Hi GetHired4U, I want to start my job journey.',
@@ -1958,7 +1889,6 @@ async function handleFormSubmit(){
     'Email: ' + email,
     'Target role: ' + role,
     'Selected service: ' + service,
-    paymentId ? 'Payment ID: ' + paymentId : '',
     'Resume: ' + resumeLine,
     '',
     'Please confirm the details and share the next steps.'
