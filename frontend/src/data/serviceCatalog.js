@@ -6,7 +6,7 @@ export const coreServices = [
     category: "core",
     title: "Graduate Resume Repair",
     description: "Fresher resume rewrite for ATS readability, project proof, and recruiter clarity.",
-    startingPrice: "INR 799",
+    startingPrice: "INR 199",
     highlights: [
       "JD keyword and semantic match scoring",
       "Formatting and readability validation",
@@ -30,7 +30,7 @@ export const coreServices = [
     category: "core",
     title: "Fresher Job Alerts (India)",
     description: "Profile-based fresher job curation for Bengaluru, Hyderabad, Pune, Chennai, Delhi NCR, Mumbai, and remote roles.",
-    startingPrice: "INR 299",
+    startingPrice: "INR 99",
     highlights: [
       "Role and stack based alert matching",
       "Experience-based filters with quality gates",
@@ -53,7 +53,7 @@ export const coreServices = [
     category: "core",
     title: "Placement Interview Prep",
     description: "Structured technical, project, and HR answer practice for fresher interviews.",
-    startingPrice: "INR 499",
+    startingPrice: "INR 149",
     highlights: [
       "Python, Django, SQL, Selenium tracks",
       "Scenario-based answer frameworks",
@@ -75,7 +75,7 @@ export const coreServices = [
     category: "core",
     title: "Mock Interviews for Freshers",
     description: "Live technical and HR mock rounds with practical scoring and correction plans.",
-    startingPrice: "INR 999",
+    startingPrice: "INR 299",
     highlights: [
       "Role-specific technical and behavioral rounds",
       "Communication and confidence scoring",
@@ -120,7 +120,7 @@ export const coreServices = [
     category: "core",
     title: "GitHub + LinkedIn + Naukri Boost",
     description: "Fresher visibility setup across hiring platforms and project proof channels.",
-    startingPrice: "INR 699",
+    startingPrice: "INR 149",
     highlights: [
       "LinkedIn headline/About optimization",
       "GitHub repo structure and README storytelling",
@@ -142,7 +142,7 @@ export const coreServices = [
     category: "core",
     title: "Project Proof Accelerator",
     description: "Project positioning that becomes resume proof and interview evidence, not just tutorial work.",
-    startingPrice: "INR 1,199",
+    startingPrice: "INR 499",
     highlights: [
       "Industry use-case project selection",
       "Build-ready execution roadmap",

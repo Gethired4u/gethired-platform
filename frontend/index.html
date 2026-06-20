@@ -786,49 +786,49 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
       <div class="svc-card g">
         <div class="svc-name">Resume Optimization</div>
         <div class="svc-tag">Make your resume get selected</div>
-        <div class="svc-price">₹799</div>
+        <div class="svc-price">₹199</div>
         <ul class="feat-list"><li>AI + manual improvement</li><li>ATS keyword optimization</li><li>Professional formatting</li><li>Strong bullet points</li></ul>
         <button class="svc-btn" onclick="scrollToForm()">Fix My Resume</button>
       </div>
       <div class="svc-card b">
         <div class="svc-name">Daily Job Alerts</div>
         <div class="svc-tag">Get relevant jobs every day</div>
-        <div class="svc-price">₹299</div>
+        <div class="svc-price">₹99</div>
         <ul class="feat-list"><li>Matched to your profile</li><li>No spam jobs</li><li>Daily WhatsApp updates</li><li>Verified openings only</li></ul>
         <button class="svc-btn" onclick="scrollToForm()">Send Me Jobs</button>
       </div>
       <div class="svc-card y">
         <div class="svc-name">Interview Prep</div>
         <div class="svc-tag">Prepare real questions & answers</div>
-        <div class="svc-price">₹499</div>
+        <div class="svc-price">₹149</div>
         <ul class="feat-list"><li>Most asked questions</li><li>Simple clear answers</li><li>Resume-based questions</li><li>Expert support</li></ul>
         <button class="svc-btn" onclick="scrollToForm()">Start Preparation</button>
       </div>
       <div class="svc-card r">
         <div class="svc-name">Mock Interview</div>
         <div class="svc-tag">Practice with real interviewers</div>
-        <div class="svc-price">₹999</div>
+        <div class="svc-price">₹299</div>
         <ul class="feat-list"><li>Live mock session</li><li>Detailed feedback report</li><li>Communication tips</li><li>Confidence building</li></ul>
         <button class="svc-btn" onclick="scrollToForm()">Book Mock Interview</button>
       </div>
       <div class="svc-card p">
         <div class="svc-name">Naukri Optimization</div>
         <div class="svc-tag">Get more recruiter calls</div>
-        <div class="svc-price">₹599</div>
+        <div class="svc-price">₹149</div>
         <ul class="feat-list"><li>Profile SEO & keywords</li><li>Profile ranking boost</li><li>Skills enhancement</li><li>Headline rewrite</li></ul>
         <button class="svc-btn" onclick="scrollToForm()">Optimize Naukri</button>
       </div>
       <div class="svc-card br">
         <div class="svc-name">LinkedIn Optimization</div>
         <div class="svc-tag">Make recruiters notice you</div>
-        <div class="svc-price">₹599</div>
+        <div class="svc-price">₹149</div>
         <ul class="feat-list"><li>Headline & summary rewrite</li><li>Visibility boost strategy</li><li>Networking tips</li><li>Professional branding</li></ul>
         <button class="svc-btn" onclick="scrollToForm()">Optimize LinkedIn</button>
       </div>
       <div class="svc-card o">
         <div class="svc-name">GitHub + Projects</div>
         <div class="svc-tag">Build a portfolio that impresses</div>
-        <div class="svc-price">₹1499</div>
+        <div class="svc-price">₹499</div>
         <ul class="feat-list"><li>End-to-end real projects</li><li>GitHub setup & profile</li><li>Portfolio-ready work</li><li>Full guidance & support</li></ul>
         <button class="svc-btn" onclick="scrollToForm()">Build My Projects</button>
       </div>
@@ -1397,13 +1397,13 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
           <option>Resume Check (₹1) — Entry Offer</option>
           <option>Complete Job Success Package (₹1999) — Most Popular</option>
           <option>Job Starter Pack (₹999)</option>
-          <option>Resume Optimization (₹799)</option>
-          <option>Mock Interview (₹999)</option>
-          <option>Interview Prep (₹499)</option>
-          <option>Daily Job Alerts (₹299)</option>
-          <option>Naukri Optimization (₹599)</option>
-          <option>LinkedIn Optimization (₹599)</option>
-          <option>GitHub + Projects (₹1499)</option>
+          <option>Resume Optimization (₹199)</option>
+          <option>Mock Interview (₹299)</option>
+          <option>Interview Prep (₹149)</option>
+          <option>Daily Job Alerts (₹99)</option>
+          <option>Naukri Optimization (₹149)</option>
+          <option>LinkedIn Optimization (₹149)</option>
+          <option>GitHub + Projects (₹499)</option>
         </select>
       </div>
       <div class="form-group">
@@ -1484,7 +1484,7 @@ const CONTACT_WHATSAPP_NUMBER = '918328221007';
 const API_BASE_URL = window.GH_API_BASE_URL ||
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:8000'
-    : '');
+    : '/api');
 
 // ── Analytics helper ───────────────────────────────────────────────────────
 function trackEvent(name, params){
@@ -1708,7 +1708,7 @@ function showActivity(){
   },4500);
   if(feed.children.length>2) feed.removeChild(feed.children[0]);
 }
-setTimeout(()=>{showActivity();setInterval(showActivity,5000);},3000);
+// Activity notifications disabled.
 
 // ===========================
 // ATS SCORE CHECKER
@@ -1902,7 +1902,7 @@ function toggleFAQ(btn){
 // ===========================
 let popupShown = false;
 document.addEventListener('mouseleave',function(e){
-  if(e.clientY < 10 && !popupShown && !localStorage.getItem('gh4u_popup')){
+  if(false && e.clientY < 10 && !popupShown && !localStorage.getItem('gh4u_popup')){
     popupShown = true;
     setTimeout(()=>{
       const popup = document.getElementById('popup');
@@ -2035,3 +2035,5 @@ document.getElementById('atsFile') && document.getElementById('atsFile').addEven
 </style>
 </body>
 </html>
+
+

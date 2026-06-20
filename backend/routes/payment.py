@@ -13,8 +13,11 @@ router = APIRouter(tags=["payment"])
 # ── Service price whitelist (prevents price tampering from frontend) ────────
 SERVICE_PRICES = {
     1: 1,          # ₹1 diagnostic
-    299: 299,      # Job alerts
-    499: 499,      # Interview prep
+    99: 99,        # Job alerts
+    149: 149,      # Interview prep / profile optimization
+    199: 199,      # Resume ATS repair
+    299: 299,      # Mock interview
+    499: 499,      # Project proof
     599: 599,      # Naukri / LinkedIn
     699: 699,      # LinkedIn boost
     799: 799,      # Resume ATS repair
@@ -82,3 +85,4 @@ def verify_payment(req: VerifyPaymentRequest) -> dict:
         raise HTTPException(status_code=400, detail="Payment signature verification failed.")
 
     return {"verified": True, "payment_id": req.razorpay_payment_id}
+
