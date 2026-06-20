@@ -14,7 +14,7 @@ export default function Navbar() {
         <div className="logo">GetHired<span>4U</span></div>
         <div className="nav-right">
           <a href="#form" className="btn-primary nav-cta" style={{padding:'9px 20px',fontSize:'13px'}}>Get Started ₹1</a>
-          <a href="https://wa.me/919999999999" className="nav-wa-btn" target="_blank" rel="noreferrer">
+          <a href="https://wa.me/918328221007" className="nav-wa-btn" target="_blank" rel="noreferrer">
             <WASvg />
             WhatsApp
           </a>

@@ -16,7 +16,7 @@ export default function Footer() {
       </footer>
       <div className="sticky-bottom">
         <a href="#form" className="sb1">🚀 Start for ₹1</a>
-        <a href="https://wa.me/919999999999" className="sb2" target="_blank" rel="noreferrer">💬 WhatsApp Us</a>
+        <a href="https://wa.me/918328221007" className="sb2" target="_blank" rel="noreferrer">💬 WhatsApp Us</a>
       </div>
     </>
   )

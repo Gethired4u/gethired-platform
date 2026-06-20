@@ -636,8 +636,21 @@ function AdminPage() {
 
                         <td className="px-4 py-3 text-slate text-xs">{user.role}</td>
 
-                        <td className="max-w-[150px] px-4 py-3 text-xs text-slate truncate">
-                          {user.services_interested?.join(", ") || "—"}
+                        <td className="min-w-[220px] max-w-[320px] px-4 py-3 text-xs text-slate">
+                          {user.services_interested?.length ? (
+                            <div className="flex flex-wrap gap-1.5">
+                              {user.services_interested.map((service) => (
+                                <span
+                                  key={service}
+                                  className="rounded-full border border-brand-100 bg-white px-2 py-1 font-medium leading-snug text-slate"
+                                >
+                                  {service}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-muted">—</span>
+                          )}
                         </td>
 
                         {/* Status */}

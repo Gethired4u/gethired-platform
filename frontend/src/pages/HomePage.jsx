@@ -7,7 +7,7 @@ import { indianStudentReviews } from "../data/studentReviews";
 import { registerUser } from "../services/api";
 
 // ─── Constants ────────────────────────────────────────────────
-const WHATSAPP_LINK = "https://wa.me/919999999999";
+const WHATSAPP_LINK = "https://wa.me/918328221007";
 const COUNTDOWN_SECONDS = 11 * 3600 + 47 * 60 + 23;
 const OFFER_STORAGE_KEY = "gethired_offer_end";
 
