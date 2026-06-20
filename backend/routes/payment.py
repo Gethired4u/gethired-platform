@@ -12,18 +12,20 @@ router = APIRouter(tags=["payment"])
 
 # ── Service price whitelist (prevents price tampering from frontend) ────────
 SERVICE_PRICES = {
-    1: 1,          # ₹1 diagnostic
+    1: 1,          # ₹1 Resume Check (1 Day)
     99: 99,        # Job alerts
     149: 149,      # Interview prep / profile optimization
     199: 199,      # Resume ATS repair
     299: 299,      # Mock interview
+    399: 399,      # Job Starter Pack (15 Days)
     499: 499,      # Project proof
     599: 599,      # Naukri / LinkedIn
     699: 699,      # LinkedIn boost
     799: 799,      # Resume ATS repair
-    999: 999,      # Mock interview / Career Starter
-    1499: 1499,    # Project proof
-    1999: 1999,    # 30-day sprint
+    999: 999,      # Placement Accelerator (30 Days)
+    1499: 1499,    # Premium Placement Support (60 Days)
+    1999: 1999,    # 30-day sprint (legacy)
+    2499: 2499,    # Ultimate Career Transformation (90 Days)
 }
 
 

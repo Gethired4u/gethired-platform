@@ -75,20 +75,23 @@ const quizQuestions = [
 ];
 
 const packagePlans = [
-  { name: "INR 1 Job Readiness Check", price: "INR 1", subtitle: "Low-risk entry review", benefitsTitle: "Includes", features: ["Resume weakness scan", "Profile visibility check", "Top 5 correction priorities"], ctaText: "Start at INR 1", bestFor: "Anyone unsure why calls are not coming" },
-  { name: "Career Starter", price: "INR 999", subtitle: "Resume plus application sprint", benefitsTitle: "Includes", features: ["Resume optimization", "Naukri and LinkedIn fixes", "15-day job search lane", "Interview prep starter kit"], ctaText: "Choose Starter", bestFor: "Students, freshers, and job switchers" },
-  { name: "30-Day Job Sprint", price: "INR 1,999", subtitle: "Complete execution plan", benefitsTitle: "Includes", features: ["Resume + profile repair", "Proof and portfolio improvement", "30-day opportunity support", "Interview prep + mock round", "WhatsApp accountability"], highlight: true, ctaText: "Activate Sprint", bestFor: "Job seekers who want daily structure" },
+  { name: "Resume Check", price: "₹1", subtitle: "1 Day · Low-risk entry", benefitsTitle: "Includes", features: ["ATS Score Report", "Top 5 Resume Mistakes", "Career Roadmap Suggestion", "One-Time WhatsApp Response"], ctaText: "Start at ₹1", bestFor: "Anyone unsure why calls are not coming" },
+  { name: "Job Starter Pack", price: "₹399", subtitle: "15 Days · Resume + alerts", benefitsTitle: "Includes", features: ["ATS Resume Rewrite", "Naukri Optimization", "LinkedIn Optimization", "30 Interview Q&As", "Job Alerts for 15 Days", "WhatsApp Support"], ctaText: "Choose Starter", bestFor: "Students and freshers starting their search" },
+  { name: "Placement Accelerator", price: "₹999", subtitle: "30 Days · Full placement push", benefitsTitle: "Includes", features: ["ATS Resume Rewrite", "Naukri + LinkedIn Optimization", "100 Interview Q&As", "1 Mock Interview", "Job Alerts for 30 Days", "Placement Readiness Score", "WhatsApp Support"], ctaText: "Accelerate Now", bestFor: "Job seekers who want daily placement momentum" },
+  { name: "Premium Placement Support", price: "₹1499", subtitle: "60 Days · Deep interview prep", benefitsTitle: "Includes", features: ["Everything in Placement Accelerator", "2 Mock Interviews", "HR + Technical Interview Preparation", "Communication Feedback Report", "Job Alerts for 60 Days", "Priority WhatsApp Support"], highlight: true, ctaText: "Go Premium", bestFor: "Candidates in active interview loop" },
+  { name: "Ultimate Career Transformation", price: "₹2499", subtitle: "90 Days · Complete career shift", benefitsTitle: "Includes", features: ["Everything in Premium Plan", "Personalized Career Roadmap", "Portfolio/GitHub Projects Setup", "LinkedIn Personal Branding", "Unlimited Resume Updates", "Weekly Progress Reviews", "Job Alerts for 90 Days", "Premium WhatsApp Support"], ctaText: "Transform Career", bestFor: "Serious candidates aiming for top roles" },
 ];
 
 const comparisonRows = [
-  { feature: "Resume diagnosis",        entry: "Yes", starter: "Yes", complete: "Yes" },
-  { feature: "ATS resume rewrite",      entry: "No",  starter: "Yes", complete: "Yes" },
-  { feature: "Naukri and LinkedIn",      entry: "No",  starter: "Yes", complete: "Yes" },
-  { feature: "GitHub/project proof",     entry: "No",  starter: "No",  complete: "Yes" },
-  { feature: "Opportunity lane", entry: "No",  starter: "15 days", complete: "30 days" },
-  { feature: "Technical + HR prep",      entry: "No",  starter: "Starter", complete: "Full" },
-  { feature: "Mock interview",          entry: "No",  starter: "No",  complete: "Yes" },
-  { feature: "WhatsApp accountability", entry: "Basic", starter: "Yes", complete: "Priority" },
+  { feature: "ATS Score Report",         entry: "Yes",       starter: "Yes",     complete: "Yes"          },
+  { feature: "ATS Resume Rewrite",       entry: "No",        starter: "Yes",     complete: "Yes"          },
+  { feature: "Naukri + LinkedIn",        entry: "No",        starter: "Yes",     complete: "Yes"          },
+  { feature: "Interview Q&As",           entry: "No",        starter: "100",     complete: "100+"         },
+  { feature: "Mock Interviews",          entry: "No",        starter: "1",       complete: "2+"           },
+  { feature: "Job Alerts",              entry: "No",        starter: "30 days", complete: "90 days"      },
+  { feature: "GitHub / Portfolio",       entry: "No",        starter: "No",      complete: "Yes"          },
+  { feature: "Career Roadmap",          entry: "Suggestion", starter: "No",     complete: "Personalized" },
+  { feature: "WhatsApp Support",        entry: "One-time",  starter: "Yes",     complete: "Premium"      },
 ];
 
 const timelineSteps = ["Share your role goal and current profile", "Get resume and profile diagnosis", "Receive corrected resume/profile assets", "Follow a focused India-wide application lane", "Practice role-specific interview answers weekly"];
@@ -174,12 +177,12 @@ function splitCountdown(remainingMs) {
 
 function getQuizRecommendation(answers) {
   if (answers.budget === "complete" || answers.challenge === "full") {
-    return { name: "30-Day Job Sprint", price: "INR 1,999", features: ["Resume, Naukri, and LinkedIn repair", "Proof and portfolio improvement", "30-day India-wide opportunity lane", "Interview prep plus mock simulation"] };
+    return { name: "Placement Accelerator", price: "₹999", features: ["ATS Resume Rewrite", "Naukri + LinkedIn Optimization", "100 Interview Q&As", "1 Mock Interview", "Job Alerts for 30 Days"] };
   }
   if (answers.budget === "growth" || answers.challenge === "resume") {
-    return { name: "Career Starter", price: "INR 999", features: ["Resume optimization", "Naukri and LinkedIn fixes", "15-day job targeting", "Interview prep starter kit"] };
+    return { name: "Job Starter Pack", price: "₹399", features: ["ATS Resume Rewrite", "Naukri + LinkedIn Optimization", "30 Interview Q&As", "Job Alerts for 15 Days"] };
   }
-  return { name: "INR 1 Job Readiness Check", price: "INR 1", features: ["Resume weakness scan", "ATS readiness summary", "Top correction priorities"] };
+  return { name: "Resume Check", price: "₹1", features: ["ATS Score Report", "Top 5 Resume Mistakes", "Career Roadmap Suggestion"] };
 }
 
 
@@ -670,7 +673,7 @@ function HomePage() {
         <div className="mx-auto max-w-6xl">
           <span className="eyebrow">Packages</span>
           <h2 className="mt-3 font-display text-3xl font-bold text-ink sm:text-4xl">Choose a plan aligned to student urgency and budget</h2>
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {packagePlans.map((plan) => <PricingCard key={plan.name} {...plan} linkTo="#form" />)}
           </div>
         </div>
@@ -686,9 +689,9 @@ function HomePage() {
               <thead>
                 <tr className="border-b border-slate-200 bg-soft">
                   <th className="px-5 py-3.5 font-semibold text-ink">Feature</th>
-                  <th className="px-5 py-3.5 font-semibold text-ink">Diagnostic</th>
-                  <th className="px-5 py-3.5 font-semibold text-ink">Career Starter</th>
-                  <th className="px-5 py-3.5 font-semibold text-brand-700">Complete</th>
+                  <th className="px-5 py-3.5 font-semibold text-ink">Resume Check ₹1</th>
+                  <th className="px-5 py-3.5 font-semibold text-ink">Placement Accelerator ₹999</th>
+                  <th className="px-5 py-3.5 font-semibold text-brand-700">Ultimate ₹2499</th>
                 </tr>
               </thead>
               <tbody>
@@ -890,9 +893,11 @@ function HomePage() {
               Service or Package <span className="text-danger-500">*</span>
               <select value={leadForm.service} onChange={(e) => setLeadForm((p) => ({ ...p, service: e.target.value }))} className="input-premium font-normal">
                 <option value="">Select a service or package</option>
-                <option value="INR 1 Job Readiness Check">INR 1 Job Readiness Check</option>
-                <option value="30-Day Job Sprint (INR 1,999)">30-Day Job Sprint (INR 1,999)</option>
-                <option value="Career Starter (INR 999)">Career Starter (INR 999)</option>
+                <option value="Resume Check (₹1)">🚀 Resume Check – ₹1 (1 Day)</option>
+                <option value="Job Starter Pack (₹399)">⚡ Job Starter Pack – ₹399 (15 Days)</option>
+                <option value="Placement Accelerator (₹999)">🔥 Placement Accelerator – ₹999 (30 Days)</option>
+                <option value="Premium Placement Support (₹1499)">💎 Premium Placement Support – ₹1499 (60 Days)</option>
+                <option value="Ultimate Career Transformation (₹2499)">👑 Ultimate Career Transformation – ₹2499 (90 Days)</option>
                 {coreServices.map((s) => <option key={s.slug} value={s.title}>{s.title}</option>)}
               </select>
             </label>

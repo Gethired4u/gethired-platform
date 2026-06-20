@@ -1,9 +1,29 @@
 import { useState } from "react";
 
 import { registerUser } from "../services/api";
-import { limitedServices } from "../data/serviceCatalog";
 
-const serviceOptions = limitedServices.map((service) => service.title);
+const packageOptions = [
+  "₹1 Resume Check (1 Day)",
+  "Job Starter Pack – ₹399 (15 Days)",
+  "Placement Accelerator – ₹999 (30 Days)",
+  "Premium Placement Support – ₹1499 (60 Days)",
+  "Ultimate Career Transformation – ₹2499 (90 Days)",
+];
+
+const individualServiceOptions = [
+  "ATS Resume Optimization",
+  "Naukri Profile Optimization",
+  "LinkedIn Profile Optimization",
+  "Interview Preparation Kit",
+  "Mock Interview Session",
+  "Job Alerts on WhatsApp",
+  "GitHub & Portfolio Setup",
+  "Placement Readiness Score",
+  "HR Interview Preparation",
+  "Technical Interview Preparation",
+  "Career Roadmap Planning",
+  "Salary Negotiation Guidance",
+];
 const WHATSAPP_LINK = "https://wa.me/918328221007";
 
 const initialForm = {
@@ -168,19 +188,57 @@ function RegisterPage() {
             Resume upload is collected in the next step. Keep your latest resume, Naukri link, LinkedIn link, and GitHub/project link ready.
           </p>
 
+          <fieldset className="rounded-xl border border-brand-200 bg-brand-50/40 p-4">
+            <legend className="px-2 text-sm font-bold text-brand-700">Services Interested</legend>
+            <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+              {packageOptions.map((pkg) => {
+                const checked = form.services_interested.includes(pkg);
+                return (
+                  <label
+                    key={pkg}
+                    className={`flex cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2.5 text-sm transition ${
+                      checked
+                        ? "border-brand-400 bg-brand-50 font-semibold text-brand-700"
+                        : "border-slate-200 bg-white text-slate hover:border-brand-300"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggleService(pkg)}
+                      className="accent-brand-600"
+                    />
+                    {pkg}
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
+
           <fieldset className="rounded-xl border border-slate-200 p-4">
-            <legend className="px-2 text-sm font-semibold text-ink">Services Interested</legend>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">
-              {serviceOptions.map((service) => (
-                <label key={service} className="flex items-center gap-2 text-sm text-slate">
-                  <input
-                    type="checkbox"
-                    checked={form.services_interested.includes(service)}
-                    onChange={() => toggleService(service)}
-                  />
-                  {service}
-                </label>
-              ))}
+            <legend className="px-2 text-sm font-bold text-slate-600">Individual Services <span className="font-normal text-muted">(Optional)</span></legend>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {individualServiceOptions.map((service) => {
+                const checked = form.services_interested.includes(service);
+                return (
+                  <label
+                    key={service}
+                    className={`flex cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2 text-sm transition ${
+                      checked
+                        ? "border-slate-400 bg-slate-50 font-semibold text-ink"
+                        : "border-slate-200 bg-white text-slate hover:border-slate-300"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggleService(service)}
+                      className="accent-slate-600"
+                    />
+                    {service}
+                  </label>
+                );
+              })}
             </div>
           </fieldset>
 
