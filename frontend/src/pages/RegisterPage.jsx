@@ -4,6 +4,7 @@ import { registerUser } from "../services/api";
 import { limitedServices } from "../data/serviceCatalog";
 
 const serviceOptions = limitedServices.map((service) => service.title);
+const WHATSAPP_LINK = "https://wa.me/918328221007";
 
 const initialForm = {
   name: "",
@@ -193,7 +194,15 @@ function RegisterPage() {
         </form>
 
         {error && <p className="mt-4 rounded-lg bg-rose-50 px-4 py-2 text-sm text-rose-700">{error}</p>}
-        {successMessage && <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-2 text-sm text-emerald-700">{successMessage}</p>}
+        {successMessage && (
+          <div className="mt-4 flex flex-wrap items-center gap-3 rounded-lg bg-emerald-50 px-4 py-3">
+            <p className="min-w-0 flex-1 text-sm text-emerald-700">{successMessage}</p>
+            <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer"
+              className="inline-flex shrink-0 items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700">
+              Chat with team
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

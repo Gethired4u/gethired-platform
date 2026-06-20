@@ -915,10 +915,14 @@ function HomePage() {
             </div>
           )}
           {leadSuccess && (
-            <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-success-100 bg-success-50 px-4 py-3">
+            <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-success-100 bg-success-50 px-4 py-3">
               <svg viewBox="0 0 20 20" fill="currentColor" className="mt-0.5 h-4 w-4 shrink-0 text-success-600" aria-hidden="true">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-              <p className="text-sm text-success-800">{leadSuccess}</p>
+              <p className="min-w-0 flex-1 text-sm text-success-800">{leadSuccess}</p>
+              <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer"
+                className="inline-flex shrink-0 items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700">
+                Chat with team
+              </a>
             </div>
           )}
         </div>
