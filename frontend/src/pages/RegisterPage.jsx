@@ -161,12 +161,12 @@ function RegisterPage() {
 
           <div className="grid gap-4 md:grid-cols-2">
             <label className="grid gap-2 text-sm font-semibold text-ink">
-              Current Status
+              Current Career Status
               <input
                 type="text"
                 value={form.experience}
                 onChange={(e) => onFieldChange("experience", e.target.value)}
-                placeholder="e.g. final year, 2024 passout, internship"
+                placeholder="Student, Intern, Fresher, Experience"
                 className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-normal"
               />
             </label>

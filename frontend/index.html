@@ -345,7 +345,7 @@ section{padding:70px 20px}
 .del-list li{font-size:13px;color:#ccc;line-height:1.5;display:flex;gap:8px}
 .del-list li::before{content:'✅';flex-shrink:0;font-size:12px;margin-top:1px}
 .del-footer{padding:12px 20px;border-top:1px solid var(--border);background:rgba(255,255,255,.025)}
-.del-via{font-size:12px;color:var(--muted);font-weight:500}
+.del-via{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--green);background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.25);border-radius:50px;padding:4px 11px;margin-bottom:14px;letter-spacing:.01em}
 .del-cta{display:inline-block;margin-top:8px;font-size:13px;font-weight:700;color:var(--green);cursor:pointer}
 .del-guarantee{margin-top:40px;background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);border-radius:var(--radius);padding:20px 24px;display:flex;gap:16px;align-items:flex-start;text-align:left}
 .del-guarantee-icon{font-size:28px;flex-shrink:0}
@@ -581,12 +581,12 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
 <section class="hero" id="top">
   <div class="hero-badge">⭐ Trusted by 1,000+ Job Seekers Across India</div>
   <h1>Struggling to Get<br><em>Job Calls? We Fix That.</em></h1>
-  <p class="hero-sub">Resume + Profile + Projects + Daily Job Alerts + Interview Prep<br>Everything you need to get hired — faster.</p>
+  <p class="hero-sub">Resume + Profile + Projects + Daily Job Alerts + Github+ Interview Prep Support + Mock Interviews<br>Everything you need to get hired — faster.</p>
   <div class="hero-btns">
     <a href="#form" class="btn-primary" style="font-size:16px;padding:15px 30px;">🚀 Get Resume Checked for ₹1</a>
     <a href="/register" class="btn-outline" style="font-size:15px;border-color:var(--green);color:var(--green);">📝 Register Now</a>
     <a href="#how" class="btn-outline" style="font-size:15px;">See How It Works</a>
-  </div>
+  </div> 
 
   <!-- Countdown Timer -->
   <div class="countdown-wrap">
@@ -613,15 +613,34 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
       <div class="ba-ttl">Before</div>
       <div class="ba-row"><span class="x">✗</span> No ATS keywords</div>
       <div class="ba-row"><span class="x">✗</span> Generic formatting</div>
-      <div class="ba-row"><span class="x">✗</span> Weak profile</div>
-      <div class="ba-row"><span class="x">✗</span> 0 interview calls</div>
+      
+      <div class="ba-row"><span class="x">✗</span> Weak LinkedIn profile</div>
+      <div class="ba-row"><span class="x">✗</span> Incomplete Naukri profile</div>
+      <div class="ba-row"><span class="x">✗</span> No portfolio/projects</div>
+      <div class="ba-row"><span class="x">✗</span> No interview preparation</div>
+      <div class="ba-row"><span class="x">✗</span> No mock interview practice</div>
+      <div class="ba-row"><span class="x">✗</span> Applying randomly to jobs</div>
+      <div class="ba-row"><span class="x">✗</span> No recruiter visibility</div>
+      <div class="ba-row"><span class="x">✗</span> No career guidance</div>
+      <div class="ba-row"><span class="x">✗</span> Low confidence in interviews</div>
+      <div class="ba-row"><span class="x">✗</span> 0–1 interview calls</div>
     </div>
     <div class="ba-half after">
       <div class="ba-ttl">After</div>
       <div class="ba-row"><span class="chk">✓</span> ATS optimized</div>
-      <div class="ba-row"><span class="chk">✓</span> Professional format</div>
-      <div class="ba-row"><span class="chk">✓</span> Strong profile</div>
-      <div class="ba-row"><span class="chk">✓</span> 3+ calls in 7 days</div>
+      <div class="ba-row"><span class="chk">✓</span> Professional recruiter-ready format</div>
+      <div class="ba-row"><span class="chk">✓</span> Optimized LinkedIn profile</div>
+      <div class="ba-row"><span class="chk">✓</span> Optimized Naukri profile</div>
+      <div class="ba-row"><span class="chk">✓</span> Project portfolio/GitHub ready</div>
+      <div class="ba-row"><span class="chk">✓</span> Interview Q&A support included</div>
+      <div class="ba-row"><span class="chk">✓</span> Mock interview experience</div>
+      <div class="ba-row"><span class="chk">✓</span> Daily verified job alerts</div>
+      <div class="ba-row"><span class="chk">✓</span> Improved recruiter visibility</div>
+      <div class="ba-row"><span class="chk">✓</span> Personalized career roadmap</div>
+      <div class="ba-row"><span class="chk">✓</span> Higher interview confidence</div>
+      <div class="ba-row"><span class="chk">✓</span> More interview opportunities</div>
+
+
     </div>
   </div>
 </section>
@@ -642,7 +661,7 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
 <!-- ============================
      PROBLEM
 ============================ -->
-<section class="alt-bg reveal" id="problem">
+<!-- <section class="alt-bg reveal" id="problem">
   <div class="container">
     <div class="section-tag">The Problem</div>
     <h2 class="section-title">Why You're Not Getting Job Calls</h2>
@@ -656,7 +675,7 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
     </div>
     <div class="problem-cta">👉 That's exactly what we solve.</div>
   </div>
-</section>
+</section> -->
 
 <!-- ============================
      SOLUTION STEPS
@@ -784,52 +803,59 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
     <div class="divider"></div>
     <div class="services-grid">
       <div class="svc-card g">
-        <div class="svc-name">Resume Optimization</div>
+        <div class="svc-name">📄 Resume Optimization</div>
         <div class="svc-tag">Make your resume get selected</div>
         <div class="svc-price">₹199</div>
         <ul class="feat-list"><li>AI + manual improvement</li><li>ATS keyword optimization</li><li>Professional formatting</li><li>Strong bullet points</li></ul>
+        <span class="del-via">⏱️ Delivery: 24–48 Hours</span>
         <button class="svc-btn" onclick="scrollToForm()">Fix My Resume</button>
       </div>
       <div class="svc-card b">
-        <div class="svc-name">Daily Job Alerts</div>
+        <div class="svc-name">🔔 Daily Job Alerts</div>
         <div class="svc-tag">Get relevant jobs every day</div>
         <div class="svc-price">₹99</div>
         <ul class="feat-list"><li>Matched to your profile</li><li>No spam jobs</li><li>Daily WhatsApp updates</li><li>Verified openings only</li></ul>
+        <span class="del-via">📅 Duration: 15 Days</span>
         <button class="svc-btn" onclick="scrollToForm()">Send Me Jobs</button>
       </div>
       <div class="svc-card y">
-        <div class="svc-name">Interview Prep</div>
-        <div class="svc-tag">Prepare real questions & answers</div>
+        <div class="svc-name">🎯 Interview Preparation</div>
+        <div class="svc-tag">Prepare real questions &amp; answers</div>
         <div class="svc-price">₹149</div>
         <ul class="feat-list"><li>Most asked questions</li><li>Simple clear answers</li><li>Resume-based questions</li><li>Expert support</li></ul>
+        <span class="del-via">📅 Access: 15 Days</span>
         <button class="svc-btn" onclick="scrollToForm()">Start Preparation</button>
       </div>
       <div class="svc-card r">
-        <div class="svc-name">Mock Interview</div>
+        <div class="svc-name">🎤 Mock Interview</div>
         <div class="svc-tag">Practice with real interviewers</div>
         <div class="svc-price">₹299</div>
         <ul class="feat-list"><li>Live mock session</li><li>Detailed feedback report</li><li>Communication tips</li><li>Confidence building</li></ul>
+        <span class="del-via">⏱️ Session: 60 Minutes</span>
         <button class="svc-btn" onclick="scrollToForm()">Book Mock Interview</button>
       </div>
       <div class="svc-card p">
-        <div class="svc-name">Naukri Optimization</div>
+        <div class="svc-name">🚀 Naukri Optimization</div>
         <div class="svc-tag">Get more recruiter calls</div>
         <div class="svc-price">₹149</div>
-        <ul class="feat-list"><li>Profile SEO & keywords</li><li>Profile ranking boost</li><li>Skills enhancement</li><li>Headline rewrite</li></ul>
+        <ul class="feat-list"><li>Profile SEO &amp; keywords</li><li>Profile ranking boost</li><li>Skills enhancement</li><li>Headline rewrite</li></ul>
+        <span class="del-via">⏱️ Delivery: 24 Hours</span>
         <button class="svc-btn" onclick="scrollToForm()">Optimize Naukri</button>
       </div>
       <div class="svc-card br">
-        <div class="svc-name">LinkedIn Optimization</div>
+        <div class="svc-name">💼 LinkedIn Optimization</div>
         <div class="svc-tag">Make recruiters notice you</div>
         <div class="svc-price">₹149</div>
-        <ul class="feat-list"><li>Headline & summary rewrite</li><li>Visibility boost strategy</li><li>Networking tips</li><li>Professional branding</li></ul>
+        <ul class="feat-list"><li>Headline &amp; summary rewrite</li><li>Visibility boost strategy</li><li>Networking tips</li><li>Professional branding</li></ul>
+        <span class="del-via">⏱️ Delivery: 24 Hours</span>
         <button class="svc-btn" onclick="scrollToForm()">Optimize LinkedIn</button>
       </div>
       <div class="svc-card o">
-        <div class="svc-name">GitHub + Projects</div>
+        <div class="svc-name">💻 GitHub + Projects</div>
         <div class="svc-tag">Build a portfolio that impresses</div>
         <div class="svc-price">₹499</div>
-        <ul class="feat-list"><li>End-to-end real projects</li><li>GitHub setup & profile</li><li>Portfolio-ready work</li><li>Full guidance & support</li></ul>
+        <ul class="feat-list"><li>End-to-end real projects</li><li>GitHub setup &amp; profile</li><li>Portfolio-ready work</li><li>Full guidance &amp; support</li></ul>
+        <span class="del-via">📅 Support: 15 Days</span>
         <button class="svc-btn" onclick="scrollToForm()">Build My Projects</button>
       </div>
     </div>
@@ -925,7 +951,7 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
           <li>Career Roadmap Suggestion</li>
           <li>One-Time WhatsApp Response</li>
         </ul>
-        <p style="font-size:12px;color:var(--green);font-weight:600;margin-bottom:14px">⏱ Delivered within 24 hrs via WhatsApp</p>
+        <p><span class="del-via">⏱️ Delivered within 24 Hours</span></p>
         <button class="pack-btn" onclick="scrollToForm()">Start for ₹1</button>
       </div>
       <div class="pack starter">
@@ -941,7 +967,7 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
           <li>Job Alerts for 15 Days</li>
           <li>WhatsApp Support</li>
         </ul>
-        <p style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:14px">⏱ Delivered over 3 days · starts same day</p>
+        <p><span class="del-via">📅 Duration: 15 Days</span></p>
         <button class="pack-btn" onclick="scrollToForm()">Choose Starter</button>
       </div>
       <div class="pack">
@@ -1000,137 +1026,6 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
   </div>
 </section>
 
-<!-- ============================
-     WHAT YOU GET (DELIVERABLES)
-============================ -->
-<section class="reveal" id="deliverables">
-  <div class="container">
-    <div class="section-tag center">Zero Guessing</div>
-    <h2 class="section-title center">Exactly What You Get — No Surprises</h2>
-    <div class="divider" style="margin:14px auto 0"></div>
-    <p class="section-sub center" style="margin:12px auto 0">Every plan includes specific files, timelines, and delivery methods. Written below so you know exactly what to expect before you pay.</p>
-
-    <div class="deliverables-grid">
-
-      <!-- ₹1 -->
-      <div class="del-card entry-del">
-        <div class="del-header">
-          <span class="del-price">₹1 — Resume Diagnostic</span>
-          <span class="del-time">⏱ Delivered within 24 hours</span>
-        </div>
-        <div class="del-body">
-          <div>
-            <div class="del-block-title">What you receive</div>
-            <ul class="del-list">
-              <li>ATS readiness score (0–100) for your current resume</li>
-              <li>Written list of your top 5 specific resume problems</li>
-              <li>Naukri and LinkedIn visibility check with quick fixes</li>
-              <li>Recommended next plan based on your goal and stage</li>
-            </ul>
-          </div>
-          <div>
-            <div class="del-block-title">Format</div>
-            <ul class="del-list">
-              <li>Detailed WhatsApp message with the full report</li>
-              <li>Plain language — no confusing jargon</li>
-            </ul>
-          </div>
-        </div>
-        <div class="del-footer">
-          <span class="del-via">📱 Delivered on WhatsApp · No email needed</span>
-          <span class="del-cta" onclick="scrollToForm()">Start for ₹1 →</span>
-        </div>
-      </div>
-
-      <!-- ₹399 -->
-      <div class="del-card starter-del">
-        <div class="del-header">
-          <span class="del-price">₹399 — Job Starter Pack</span>
-          <span class="del-time">⏱ 3 days delivery · starts same day</span>
-        </div>
-        <div class="del-body">
-          <div>
-            <div class="del-block-title">Day 1 — Resume</div>
-            <ul class="del-list">
-              <li>Fully rewritten ATS resume — Word file + PDF</li>
-              <li>Keywords optimised for your exact target role</li>
-              <li>1 round of revisions if you want changes</li>
-            </ul>
-          </div>
-          <div>
-            <div class="del-block-title">Day 2 — Profiles</div>
-            <ul class="del-list">
-              <li>Naukri headline, summary, and skill keywords rewritten</li>
-              <li>15-day daily job alert setup on WhatsApp (matching your role)</li>
-            </ul>
-          </div>
-          <div>
-            <div class="del-block-title">Day 3 — Interview Prep</div>
-            <ul class="del-list">
-              <li>PDF guide with 30 role-specific interview Q&As</li>
-              <li>Tell me about yourself script written for your background</li>
-            </ul>
-          </div>
-        </div>
-        <div class="del-footer">
-          <span class="del-via">📎 Files via Email · 📱 Alerts on WhatsApp</span>
-          <span class="del-cta" onclick="scrollToForm()">Start Starter Pack →</span>
-        </div>
-      </div>
-
-      <!-- ₹999 -->
-      <div class="del-card featured-del">
-        <div class="del-ribbon">🔥 Most Complete — Best Results</div>
-        <div class="del-header">
-          <span class="del-price">₹999 — Placement Accelerator</span>
-          <span class="del-time">⏱ Full 30-day execution plan</span>
-        </div>
-        <div class="del-body">
-          <div>
-            <div class="del-block-title">Week 1 — Profile Repair</div>
-            <ul class="del-list">
-              <li>ATS resume rewrite — Word + PDF + 1 revision round</li>
-              <li>Naukri headline, summary, and skills fully updated</li>
-              <li>LinkedIn About section + headline rewritten</li>
-              <li>GitHub README or project narrative written for your resume</li>
-            </ul>
-          </div>
-          <div>
-            <div class="del-block-title">Week 2 — Interview Readiness</div>
-            <ul class="del-list">
-              <li>Full interview prep guide — 50+ role-specific Q&As (PDF)</li>
-              <li>1 live mock interview — 45 minutes via video call</li>
-              <li>Scorecard sent after — weak areas + what to improve</li>
-            </ul>
-          </div>
-          <div>
-            <div class="del-block-title">Weeks 3–4 — Daily Execution</div>
-            <ul class="del-list">
-              <li>Daily job alerts on WhatsApp for 30 days</li>
-              <li>Weekly accountability check-in every Sunday</li>
-              <li>Application follow-up message templates</li>
-            </ul>
-          </div>
-        </div>
-        <div class="del-footer">
-          <span class="del-via">📎 Email · 📱 WhatsApp daily · 📞 Live call</span>
-          <span class="del-cta" onclick="scrollToForm()">Get Placement Accelerator →</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Guarantee / trust note -->
-    <div class="del-guarantee">
-      <div class="del-guarantee-icon">🛡️</div>
-      <div>
-        <h4>What if I'm not satisfied?</h4>
-        <p>If the deliverables listed above are not provided within the stated timeline, we will redo them at no extra cost. We do not guarantee job placement — but we do guarantee delivery of everything described on this page. Contact us on WhatsApp and we will make it right.</p>
-      </div>
-    </div>
-
-  </div>
-</section>
 
 <!-- ============================
      COMPARE TABLE
@@ -1211,7 +1106,7 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
       <div>
         <div class="founder-badge">Founder &amp; Career Coach</div>
         <div class="founder-name">Bhargava D M</div>
-        <div class="founder-title">Founder, GetHired4U · Hyderabad, India</div>
+        <div class="founder-title">Founder, GetHired4U · Bengaluru, India</div>
         <p class="founder-quote">
           "Hi, I'm Bhargava D M. I've helped 1,200+ job seekers across India get shortlisted faster.
           I built GetHired4U because I saw too many talented freshers getting rejected — not because of their skills,
@@ -1219,7 +1114,7 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
         </p>
         <div class="founder-stats">
           <div class="founder-stat"><strong>1,200+</strong><span>Profiles helped</span></div>
-          <div class="founder-stat"><strong>3+ yrs</strong><span>Career coaching</span></div>
+          <div class="founder-stat"><strong>6+ yrs</strong><span>Career coaching</span></div>
           <div class="founder-stat"><strong>Pan-India</strong><span>Support</span></div>
         </div>
       </div>
