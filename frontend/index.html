@@ -335,7 +335,13 @@ section{padding:70px 20px}
 .compare-table .btn-row button{width:100%;padding:10px;border-radius:50px;border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif}
 .compare-table .btn-row .featured-col button{background:var(--green);color:#000;box-shadow:0 0 16px rgba(0,230,118,.3)}
 .compare-table .btn-row td:not(.featured-col) button{background:transparent;border:1.5px solid var(--border);color:var(--white)}
-.table-wrap{overflow-x:auto}
+.scroll-table-outer{position:relative;margin-top:32px;padding:0 8px}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);border:1px solid var(--border)}
+.tbl-btn{display:none;position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:var(--card2);border:1.5px solid var(--border);color:var(--white);font-size:26px;align-items:center;justify-content:center;cursor:pointer;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,.7);transition:background .18s,transform .18s;padding:0;line-height:1}
+.tbl-btn:hover{background:var(--green);color:#000;border-color:var(--green)}
+.tbl-btn-l{left:-6px}
+.tbl-btn-r{right:-6px}
+@media(max-width:720px){.tbl-btn{display:flex}}
 
 /* ============================
    DELIVERABLES
@@ -555,10 +561,25 @@ section{padding:70px 20px}
 /* ============================
    FOOTER
 ============================ */
-footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;color:#444;font-size:13px}
-.footer-links{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-bottom:12px}
-.footer-links a{color:#555;transition:color .18s}
-.footer-links a:hover{color:var(--green)}
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:56px 20px 0}
+.footer-grid{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1.6fr;gap:40px;padding-bottom:48px}
+@media(max-width:800px){.footer-grid{grid-template-columns:1fr 1fr;gap:32px}}
+@media(max-width:480px){.footer-grid{grid-template-columns:1fr;gap:28px}}
+.footer-logo-text{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:var(--white);margin-bottom:12px}
+.footer-logo-text span{color:var(--green)}
+.footer-brand-desc{color:var(--muted);font-size:14px;line-height:1.75;max-width:260px}
+.footer-col h4{color:var(--white);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:10px}
+.footer-col ul li a{color:var(--muted);font-size:14px;transition:color .18s}
+.footer-col ul li a:hover{color:var(--green)}
+.footer-contact-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.footer-contact-row a{color:var(--muted);font-size:14px;transition:color .18s}
+.footer-contact-row a:hover{color:var(--green)}
+.footer-icon{width:34px;height:34px;border-radius:8px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.footer-bottom{border-top:1px solid var(--border);padding:20px;text-align:center;color:#444;font-size:13px}
+.footer-bottom a{color:#555;transition:color .18s}
+.footer-bottom a:hover{color:var(--green)}
 
 /* ============================
    STICKY BOTTOM (MOBILE)
@@ -1083,7 +1104,10 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
     <div class="section-tag">Compare</div>
     <h2 class="section-title">Which Plan Is Right for You?</h2>
     <div class="divider"></div>
-    <div class="table-wrap" style="margin-top:32px">
+    <div class="scroll-table-outer">
+      <button class="tbl-btn tbl-btn-l" onclick="scrollTbl(-1)" aria-label="Scroll left">&#8249;</button>
+      <button class="tbl-btn tbl-btn-r" onclick="scrollTbl(1)"  aria-label="Scroll right">&#8250;</button>
+      <div class="table-wrap" id="compareWrap">
       <table class="compare-table">
         <thead>
           <tr>
@@ -1117,7 +1141,8 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
           </tr>
         </tbody>
       </table>
-    </div>
+      </div><!-- /table-wrap -->
+    </div><!-- /scroll-table-outer -->
   </div>
 </section>
 
@@ -1457,17 +1482,64 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-links">
-    <a href="#top">Home</a>
-    <a href="#services">Services</a>
-    <a href="#packages">Packages</a>
-    <a href="#faq">FAQ</a>
-    <a href="#resources">Blog</a>
-    <a href="mailto:support@gethired4u.com">support@gethired4u.com</a>
-    <a href="mailto:support@gethired4u.com?subject=Privacy%20Policy">Privacy Policy</a>
-    <a href="mailto:support@gethired4u.com?subject=Terms%20and%20Conditions">Terms</a>
+  <div class="footer-grid">
+
+    <!-- Brand -->
+    <div>
+      <div class="footer-logo-text">GetHired<span>4U</span></div>
+      <p class="footer-brand-desc">India's most trusted career placement platform. Resume, Profile, Projects, Interviews — we guide you at every step.</p>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#top">Home</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#packages">Packages</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#resources">Blog</a></li>
+        <li><a href="#form">Get Started</a></li>
+      </ul>
+    </div>
+
+    <!-- Services -->
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#services">Resume Optimization</a></li>
+        <li><a href="#services">Naukri Profile</a></li>
+        <li><a href="#services">LinkedIn Profile</a></li>
+        <li><a href="#services">Mock Interview</a></li>
+        <li><a href="#services">Job Alerts</a></li>
+        <li><a href="#services">Career Roadmap</a></li>
+      </ul>
+    </div>
+
+    <!-- Contact -->
+    <div class="footer-col">
+      <h4>Contact Us</h4>
+      <div class="footer-contact-row">
+        <div class="footer-icon">📧</div>
+        <a href="mailto:support@gethired4u.com">support@gethired4u.com</a>
+      </div>
+      <div class="footer-contact-row">
+        <div class="footer-icon">📞</div>
+        <a href="tel:+918639400762">+91 863 940 0762</a>
+      </div>
+      <div class="footer-contact-row">
+        <div class="footer-icon">💬</div>
+        <a href="https://wa.me/919187644559" target="_blank" rel="noreferrer">+91 918 764 4559 (WhatsApp)</a>
+      </div>
+    </div>
+
   </div>
-  <p>© 2026 GetHired4U · Built for Indian Job Seekers · All Rights Reserved</p>
+  <div class="footer-bottom">
+    <p>© 2026 GetHired4U · Built for Indian Job Seekers · All Rights Reserved &nbsp;·&nbsp;
+      <a href="/privacy-policy.html">Privacy Policy</a> &nbsp;·&nbsp;
+      <a href="/terms.html">Terms &amp; Conditions</a>
+    </p>
+  </div>
 </footer>
 
 <!-- MOBILE STICKY BOTTOM -->
@@ -1988,6 +2060,14 @@ function claimGift(){
   popupBox.innerHTML = '<div style="text-align:center;padding:20px"><div style="font-size:48px;margin-bottom:16px">✅</div><h3 style="margin-bottom:8px">Request received!</h3><p style="color:var(--muted);font-size:14px">We will send the checklist to your email. Also check spam if you don\'t see it.</p><br><a href="#form" onclick="closePopup()" style="background:var(--green);color:#000;padding:12px 28px;border-radius:50px;font-weight:700;font-size:14px">Now Get Started for ₹1 →</a></div>';
   contactByEmail('Free Resume Mistakes Checklist', `Please send the free resume checklist to: ${email}`);
   setTimeout(closePopup, 5000);
+}
+
+// ===========================
+// TABLE SCROLL BUTTONS
+// ===========================
+function scrollTbl(dir){
+  const wrap = document.getElementById('compareWrap');
+  if(wrap) wrap.scrollBy({left: dir * 180, behavior:'smooth'});
 }
 
 // ===========================
