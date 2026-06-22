@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
-from routes import admin, payment, register, resume, upload
+from routes import admin, ats_gate, payment, register, resume, upload
 from services.db import init_db
 
 UPLOAD_DIR = Path("uploads")
@@ -57,6 +57,7 @@ def health_check() -> dict[str, str]:
 
 
 app.include_router(resume.router)
+app.include_router(ats_gate.router)
 app.include_router(register.router)
 app.include_router(admin.router)
 app.include_router(upload.router)

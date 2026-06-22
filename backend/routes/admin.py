@@ -10,7 +10,7 @@ from fastapi.responses import Response
 from jose import JWTError, jwt
 from pydantic import BaseModel, Field
 
-from services.db import delete_user, get_setting, list_analysis_history, list_users, set_setting, update_lead, VALID_STATUSES
+from services.db import delete_user, get_setting, list_analysis_history, list_ats_leads, list_users, set_setting, update_lead, VALID_STATUSES
 from services.emailer import test_smtp_connection
 
 logger = logging.getLogger(__name__)
@@ -77,6 +77,11 @@ def verify_admin_token(authorization: Optional[str] = Header(None)) -> dict[str,
 @router.get("/users")
 def get_users(_auth: dict[str, Any] = Depends(verify_admin_token)) -> list[dict]:
     return [user.model_dump() for user in list_users()]
+
+
+@router.get("/admin/ats-leads")
+def get_ats_leads(_auth: dict[str, Any] = Depends(verify_admin_token)) -> list[dict]:
+    return list_ats_leads()
 
 
 @router.get("/analysis-history")

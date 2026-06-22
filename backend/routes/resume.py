@@ -7,7 +7,7 @@ from typing import Optional
 
 from fastapi import APIRouter, File, HTTPException, UploadFile, Form
 
-from services.db import create_analysis_history
+from services.db import consume_ats_session, create_analysis_history, create_ats_lead, email_used_for_ats
 from services.resume_analyzer import analyze_resume
 
 logger = logging.getLogger(__name__)
@@ -59,6 +59,10 @@ async def analyze_resume_endpoint(
     job_description: Optional[str] = Form(None),
     position: Optional[str] = Form(None),
     experience_level: Optional[str] = Form(None),
+    email: Optional[str] = Form(None),
+    session_token: Optional[str] = Form(None),
+    name: Optional[str] = Form(None),
+    mobile: Optional[str] = Form(None),
 ) -> dict:
     """
     Analyze a resume file for ATS compatibility.
@@ -77,6 +81,14 @@ async def analyze_resume_endpoint(
 
     # Prefer explicit job_description; fallback to position text for analysis context
     target_context = job_description.strip() if job_description and job_description.strip() else f"Target position: {position.strip()}"
+
+    # Gate: validate OTP session before burning any API/compute cost
+    email_lower = email.strip().lower() if email and email.strip() else None
+    if email_lower:
+        if email_used_for_ats(email_lower):
+            raise HTTPException(status_code=409, detail="This email has already used the free ATS check.")
+        if not session_token or not consume_ats_session(email_lower, session_token.strip()):
+            raise HTTPException(status_code=403, detail="OTP not verified. Please complete the OTP step first.")
 
     # Validate file extension
     allowed_extensions = ['.pdf', '.docx', '.doc', '.txt']
@@ -106,13 +118,30 @@ async def analyze_resume_endpoint(
 
         exp_level = experience_level.strip() if experience_level and experience_level.strip() else ""
         loop = asyncio.get_running_loop()
-        return await loop.run_in_executor(
+        result = await loop.run_in_executor(
             ANALYSIS_EXECUTOR,
             _analyze_and_persist,
             temp_file_path,
             target_context,
             exp_level,
         )
+
+        # Persist ATS lead if the request came through the OTP gate
+        if email_lower:
+            try:
+                from routes.ats_gate import _pending
+                pending = _pending.pop(email_lower, {})
+                create_ats_lead(
+                    name=pending.get("name") or (name.strip() if name else ""),
+                    email=email_lower,
+                    mobile=pending.get("mobile") or (mobile.strip() if mobile else ""),
+                    ats_score=result.get("ats_score", 0),
+                    job_role=target_context[:120],
+                )
+            except Exception as exc:
+                logger.warning("Failed to save ATS lead for %s: %s", email_lower, exc)
+
+        return result
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")

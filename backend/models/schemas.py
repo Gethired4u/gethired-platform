@@ -11,10 +11,12 @@ class UserRegistration(BaseModel):
     lead_source: str = Field(default="web", max_length=120)
     recommended_plan: str | None = Field(default=None, max_length=160)
     quiz_answers: dict[str, str] = Field(default_factory=dict)
+    email_token: str | None = Field(default=None)
 
 
 class UserRecord(BaseModel):
     id: int
+    registration_id: str = ""
     name: str
     email: EmailStr
     phone: str
@@ -35,7 +37,7 @@ class UserRecord(BaseModel):
 class RegistrationResponse(BaseModel):
     success: bool
     message: str
-    user_id: int
+    registration_id: str
 
 
 class ResumeIssue(BaseModel):

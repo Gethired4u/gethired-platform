@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { downloadAnalysisHistoryCSV, fetchAnalysisHistory, fetchUsers, loginAdmin } from "../services/api";
+import { downloadAnalysisHistoryCSV, fetchAnalysisHistory, fetchAtsLeads, fetchUsers, loginAdmin } from "../services/api";
 import api from "../services/api";
 
 // ── Offer Timer helpers ────────────────────────────────────────────────────
@@ -333,6 +333,7 @@ function AdminPage() {
 
   const [users, setUsers]             = useState([]);
   const [history, setHistory]         = useState([]);
+  const [atsLeads, setAtsLeads]       = useState([]);
   const [isLoading, setIsLoading]     = useState(false);
   const [error, setError]             = useState("");
 
@@ -372,9 +373,10 @@ function AdminPage() {
     setIsLoading(true);
     setError("");
     try {
-      const [u, h] = await Promise.all([fetchUsers(token), fetchAnalysisHistory(token)]);
+      const [u, h, al] = await Promise.all([fetchUsers(token), fetchAnalysisHistory(token), fetchAtsLeads(token)]);
       setUsers(u);
       setHistory(h);
+      setAtsLeads(al);
     } catch (err) {
       setError(err?.response?.data?.detail || "Failed to load data.");
     } finally {
@@ -541,9 +543,10 @@ function AdminPage() {
       {/* Tabs */}
       <div className="mt-5 flex flex-wrap gap-1 w-fit rounded-xl border border-slate-200 bg-soft p-1">
         {[
-          { id: "leads",   label: `Leads (${users.length})`        },
-          { id: "history", label: `ATS History (${history.length})` },
-          { id: "offer",   label: "⏱ Offer Timer"                  },
+          { id: "leads",    label: `Leads (${users.length})`           },
+          { id: "ats",      label: `ATS Checks (${atsLeads.length})` },
+          { id: "history",  label: `ATS History (${history.length})` },
+          { id: "offer",    label: "⏱ Offer Timer"                   },
         ].map(({ id, label }) => (
           <button key={id} onClick={() => setActiveTab(id)}
             className={`rounded-lg px-5 py-2 text-sm font-semibold transition ${activeTab === id ? "bg-white shadow text-ink" : "text-muted hover:text-ink"}`}>
@@ -785,6 +788,52 @@ function AdminPage() {
                         </tr>
                       ),
                     ];
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── ATS LEADS ─────────────────────────────────────────────────────── */}
+      {activeTab === "ats" && (
+        <div className="mt-4 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-card">
+          <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
+            <p className="text-sm font-bold text-ink">Free ATS Checks — Verified Users</p>
+            <span className="rounded-full bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">{atsLeads.length} total</span>
+          </div>
+          {atsLeads.length === 0 ? (
+            <p className="px-6 py-10 text-center text-sm text-muted">No ATS check submissions yet.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-100 bg-slate-50 text-xs font-bold uppercase tracking-wide text-muted">
+                    <th className="px-4 py-3 text-left">#</th>
+                    <th className="px-4 py-3 text-left">Name</th>
+                    <th className="px-4 py-3 text-left">Email</th>
+                    <th className="px-4 py-3 text-left">Mobile</th>
+                    <th className="px-4 py-3 text-left">ATS Score</th>
+                    <th className="px-4 py-3 text-left">Job Role</th>
+                    <th className="px-4 py-3 text-left">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {atsLeads.map((lead) => {
+                    const score = Math.round(lead.ats_score || 0);
+                    const scoreColor = score >= 70 ? "text-green-600" : score >= 45 ? "text-amber-600" : "text-red-500";
+                    return (
+                      <tr key={lead.id} className="border-b border-slate-50 hover:bg-slate-50 transition">
+                        <td className="px-4 py-3 text-muted">{lead.id}</td>
+                        <td className="px-4 py-3 font-semibold text-ink">{lead.name}</td>
+                        <td className="px-4 py-3 text-slate-600">{lead.email}</td>
+                        <td className="px-4 py-3 text-slate-600">{lead.mobile}</td>
+                        <td className={`px-4 py-3 font-bold ${scoreColor}`}>{score}/100</td>
+                        <td className="px-4 py-3 max-w-xs truncate text-slate-500 text-xs">{lead.job_role || "—"}</td>
+                        <td className="px-4 py-3 text-xs text-muted">{lead.created_at?.slice(0, 16).replace("T", " ")}</td>
+                      </tr>
+                    );
                   })}
                 </tbody>
               </table>

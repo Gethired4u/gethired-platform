@@ -17,6 +17,16 @@ export async function analyzeResume(formData) {
   return response.data;
 }
 
+export async function sendRegisterOtp(email, name) {
+  const response = await api.post("/register/send-otp", { email, name });
+  return response.data;
+}
+
+export async function verifyRegisterOtp(email, otp) {
+  const response = await api.post("/register/verify-otp", { email, otp });
+  return response.data;
+}
+
 export async function registerUser(payload) {
   const response = await api.post("/register", payload);
   return response.data;
@@ -36,6 +46,13 @@ export async function fetchUsers(token) {
 
 export async function fetchAnalysisHistory(token) {
   const response = await api.get("/analysis-history", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+}
+
+export async function fetchAtsLeads(token) {
+  const response = await api.get("/admin/ats-leads", {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;

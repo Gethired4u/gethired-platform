@@ -1,4 +1,6 @@
+import random
 import sqlite3
+import string
 import threading
 import json
 from pathlib import Path
@@ -33,6 +35,8 @@ def _ensure_user_columns(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE users ADD COLUMN contacted_at TEXT")
     if "converted_at" not in existing_columns:
         conn.execute("ALTER TABLE users ADD COLUMN converted_at TEXT")
+    if "registration_id" not in existing_columns:
+        conn.execute("ALTER TABLE users ADD COLUMN registration_id TEXT NOT NULL DEFAULT ''")
 
 
 def _safe_parse_quiz_answers(payload: str | None) -> dict[str, str]:
@@ -52,6 +56,33 @@ def _safe_parse_quiz_answers(payload: str | None) -> dict[str, str]:
         normalized[str(key)] = str(value)
 
     return normalized
+
+
+def _ensure_ats_tables(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS ats_leads (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            name       TEXT    NOT NULL,
+            email      TEXT    NOT NULL UNIQUE,
+            mobile     TEXT    NOT NULL,
+            ats_score  REAL,
+            job_role   TEXT,
+            created_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+        """
+    )
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS otp_store (
+            email         TEXT PRIMARY KEY,
+            otp           TEXT NOT NULL,
+            session_token TEXT,
+            expires_at    TEXT NOT NULL,
+            verified      INTEGER NOT NULL DEFAULT 0
+        )
+        """
+    )
 
 
 def init_db() -> None:
@@ -75,6 +106,7 @@ def init_db() -> None:
                 """
             )
             _ensure_user_columns(conn)
+            _ensure_ats_tables(conn)
             conn.execute(
                 """
                 CREATE TABLE IF NOT EXISTS analysis_history (
@@ -122,12 +154,27 @@ def set_setting(key: str, value: str) -> None:
             conn.commit()
 
 
-def create_user(user: UserRegistration) -> int:
+_CHARS = string.ascii_uppercase + string.digits  # A-Z 0-9 → 36^6 ≈ 2.1B combos
+
+
+def _generate_registration_id(conn: sqlite3.Connection) -> str:
+    for _ in range(10):  # retry on collision (astronomically unlikely)
+        rid = "".join(random.choices(_CHARS, k=6))
+        exists = conn.execute(
+            "SELECT 1 FROM users WHERE registration_id = ?", (rid,)
+        ).fetchone()
+        if not exists:
+            return rid
+    raise RuntimeError("Could not generate a unique registration ID after 10 attempts.")
+
+
+def create_user(user: UserRegistration) -> tuple[int, str]:
     services = ",".join(user.services_interested)
     quiz_answers = json.dumps(user.quiz_answers or {})
 
     with _lock:
         with _connection() as conn:
+            registration_id = _generate_registration_id(conn)
             cursor = conn.execute(
                 """
                 INSERT INTO users (
@@ -139,9 +186,10 @@ def create_user(user: UserRegistration) -> int:
                     services_interested,
                     lead_source,
                     recommended_plan,
-                    quiz_answers
+                    quiz_answers,
+                    registration_id
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     user.name,
@@ -153,10 +201,11 @@ def create_user(user: UserRegistration) -> int:
                     user.lead_source,
                     user.recommended_plan,
                     quiz_answers,
+                    registration_id,
                 ),
             )
             conn.commit()
-            return int(cursor.lastrowid)
+            return int(cursor.lastrowid), registration_id
 
 
 def list_users() -> list[UserRecord]:
@@ -165,6 +214,7 @@ def list_users() -> list[UserRecord]:
             """
             SELECT
                 id,
+                registration_id,
                 name,
                 email,
                 phone,
@@ -185,6 +235,7 @@ def list_users() -> list[UserRecord]:
         users.append(
             UserRecord(
                 id=row["id"],
+                registration_id=row["registration_id"] or "",
                 name=row["name"],
                 email=row["email"],
                 phone=row["phone"],
@@ -281,6 +332,171 @@ def create_analysis_history(
             )
             conn.commit()
             return int(cursor.lastrowid)
+
+
+# ── ATS gate helpers ──────────────────────────────────────────────────────────
+
+def email_used_for_ats(email: str) -> bool:
+    with _connection() as conn:
+        row = conn.execute(
+            "SELECT 1 FROM ats_leads WHERE email = ?", (email.lower(),)
+        ).fetchone()
+        return row is not None
+
+
+def save_otp(email: str, otp: str, expires_at: str) -> None:
+    with _lock:
+        with _connection() as conn:
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO otp_store (email, otp, expires_at, verified, session_token)
+                VALUES (?, ?, ?, 0, NULL)
+                """,
+                (email.lower(), otp, expires_at),
+            )
+            conn.commit()
+
+
+def verify_otp_db(email: str, otp: str) -> str | None:
+    """Returns a session token if OTP is correct and not expired, else None."""
+    import uuid
+    from datetime import datetime, timezone
+
+    with _lock:
+        with _connection() as conn:
+            row = conn.execute(
+                "SELECT otp, expires_at, verified FROM otp_store WHERE email = ?",
+                (email.lower(),),
+            ).fetchone()
+
+            if not row or row["verified"]:
+                return None
+            if row["otp"] != otp:
+                return None
+            try:
+                expires_at = datetime.fromisoformat(row["expires_at"])
+                if expires_at.tzinfo is None:
+                    from datetime import timezone as tz
+                    expires_at = expires_at.replace(tzinfo=tz.utc)
+            except ValueError:
+                return None
+            if datetime.now(timezone.utc) > expires_at:
+                return None
+
+            token = str(uuid.uuid4())
+            conn.execute(
+                "UPDATE otp_store SET verified = 1, session_token = ? WHERE email = ?",
+                (token, email.lower()),
+            )
+            conn.commit()
+            return token
+
+
+def consume_ats_session(email: str, session_token: str) -> bool:
+    """Validates and deletes the session token. Returns True if valid."""
+    with _lock:
+        with _connection() as conn:
+            row = conn.execute(
+                "SELECT session_token, verified FROM otp_store WHERE email = ?",
+                (email.lower(),),
+            ).fetchone()
+            if not row or not row["verified"] or row["session_token"] != session_token:
+                return False
+            conn.execute("DELETE FROM otp_store WHERE email = ?", (email.lower(),))
+            conn.commit()
+            return True
+
+
+def create_ats_lead(name: str, email: str, mobile: str, ats_score: float, job_role: str) -> int:
+    with _lock:
+        with _connection() as conn:
+            cursor = conn.execute(
+                """
+                INSERT OR IGNORE INTO ats_leads (name, email, mobile, ats_score, job_role)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (name, email.lower(), mobile, ats_score, job_role),
+            )
+            conn.commit()
+            return int(cursor.lastrowid or 0)
+
+
+def list_ats_leads() -> list[dict]:
+    with _connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT id, name, email, mobile, ats_score, job_role, created_at
+            FROM ats_leads ORDER BY id DESC
+            """
+        ).fetchall()
+    return [dict(row) for row in rows]
+
+
+# ── Registration email-verification OTP ───────────────────────────────────────
+# Keys stored with "reg:" prefix to namespace from ATS OTPs in the same table.
+
+def save_reg_otp(email: str, otp: str, expires_at: str) -> None:
+    key = f"reg:{email.lower()}"
+    with _lock:
+        with _connection() as conn:
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO otp_store (email, otp, expires_at, verified, session_token)
+                VALUES (?, ?, ?, 0, NULL)
+                """,
+                (key, otp, expires_at),
+            )
+            conn.commit()
+
+
+def verify_reg_otp(email: str, otp: str) -> str | None:
+    """Returns a one-time token if OTP is correct and not expired, else None."""
+    import uuid
+    from datetime import datetime, timezone
+
+    key = f"reg:{email.lower()}"
+    with _lock:
+        with _connection() as conn:
+            row = conn.execute(
+                "SELECT otp, expires_at, verified FROM otp_store WHERE email = ?",
+                (key,),
+            ).fetchone()
+            if not row or row["verified"]:
+                return None
+            if row["otp"] != otp:
+                return None
+            try:
+                expires_at = datetime.fromisoformat(row["expires_at"])
+                if expires_at.tzinfo is None:
+                    expires_at = expires_at.replace(tzinfo=timezone.utc)
+            except ValueError:
+                return None
+            if datetime.now(timezone.utc) > expires_at:
+                return None
+
+            token = str(uuid.uuid4())
+            conn.execute(
+                "UPDATE otp_store SET verified = 1, session_token = ? WHERE email = ?",
+                (token, key),
+            )
+            conn.commit()
+            return token
+
+
+def consume_reg_otp_token(email: str, token: str) -> bool:
+    """Validates and deletes the registration email token. Returns True if valid."""
+    key = f"reg:{email.lower()}"
+    with _lock:
+        with _connection() as conn:
+            row = conn.execute(
+                "SELECT session_token, verified FROM otp_store WHERE email = ?",
+                (key,),
+            ).fetchone()
+            if not row or not row["verified"] or row["session_token"] != token:
+                return False
+            conn.execute("DELETE FROM otp_store WHERE email = ?", (key,))
+            conn.commit()
+            return True
 
 
 def list_analysis_history() -> list[dict]:

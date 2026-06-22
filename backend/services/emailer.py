@@ -65,16 +65,16 @@ def _format_services(services: list[str]) -> str:
 
 # ── User confirmation email ────────────────────────────────────────────────────
 
-def _build_user_email(payload: UserRegistration, user_id: int) -> tuple[str, str, str]:
+def _build_user_email(payload: UserRegistration, registration_id: str) -> tuple[str, str, str]:
     services      = _format_services(payload.services_interested)
-    whatsapp_link = os.getenv("WHATSAPP_LINK", "https://wa.me/918328221007").strip()
+    whatsapp_link = os.getenv("WHATSAPP_LINK", "https://wa.me/919187644559").strip()
     support_email = os.getenv("SUPPORT_EMAIL", "support@gethired4u.com").strip()
 
-    subject   = f"We received your enquiry — GetHired4U #{user_id}"
+    subject   = "We received your enquiry — GetHired4U"
     text_body = (
         f"Hi {payload.name},\n\n"
         "Thanks for contacting GetHired4U. We received your enquiry and our team will review your details shortly.\n\n"
-        f"Registration ID : {user_id}\n"
+        f"Registration ID : {registration_id}\n"
         f"Target role     : {payload.role}\n"
         f"Current status  : {payload.experience}\n"
         f"Selected service: {services}\n\n"
@@ -96,7 +96,7 @@ def _build_user_email(payload: UserRegistration, user_id: int) -> tuple[str, str
         <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin:20px 0">
           <p style="margin:0 0 8px;font-size:13px;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;color:#64748b">Your Details</p>
           <table style="border-collapse:collapse;width:100%;font-size:14px">
-            <tr><td style="padding:5px 0;color:#64748b;width:40%">Registration ID</td><td style="padding:5px 0;font-weight:600">#{user_id}</td></tr>
+            <tr><td style="padding:5px 0;color:#64748b;width:40%">Registration ID</td><td style="padding:5px 0;font-family:monospace;font-size:12px;color:#0ea5e9">{escape(registration_id)}</td></tr>
             <tr><td style="padding:5px 0;color:#64748b">Target Role</td><td style="padding:5px 0;font-weight:600">{escape(payload.role)}</td></tr>
             <tr><td style="padding:5px 0;color:#64748b">Current Status</td><td style="padding:5px 0">{escape(payload.experience)}</td></tr>
             <tr><td style="padding:5px 0;color:#64748b">Selected Service</td><td style="padding:5px 0">{escape(services)}</td></tr>
@@ -127,12 +127,12 @@ def _build_user_email(payload: UserRegistration, user_id: int) -> tuple[str, str
     return subject, text_body, html_body
 
 
-def send_registration_email(payload: UserRegistration, user_id: int) -> bool:
+def send_registration_email(payload: UserRegistration, registration_id: str) -> bool:
     if not is_email_enabled():
         return False
 
     cfg = _mail_config()
-    subject, text_body, html_body = _build_user_email(payload, user_id)
+    subject, text_body, html_body = _build_user_email(payload, registration_id)
 
     msg = EmailMessage()
     msg["Subject"]  = subject
@@ -144,23 +144,23 @@ def send_registration_email(payload: UserRegistration, user_id: int) -> bool:
 
     try:
         _send_message(msg)
-        logger.info("Confirmation email sent to %s for user_id=%s", payload.email, user_id)
+        logger.info("Confirmation email sent to %s [%s]", payload.email, registration_id)
         return True
     except Exception:
-        logger.exception("Failed to send confirmation email to %s for user_id=%s", payload.email, user_id)
+        logger.exception("Failed to send confirmation email to %s [%s]", payload.email, registration_id)
         return False
 
 
 # ── Admin notification email ───────────────────────────────────────────────────
 
-def _build_admin_email(payload: UserRegistration, user_id: int) -> tuple[str, str, str]:
+def _build_admin_email(payload: UserRegistration, registration_id: str) -> tuple[str, str, str]:
     services  = _format_services(payload.services_interested)
     base_url  = os.getenv("BASE_URL", "https://gethired4u.com").strip()
 
-    subject   = f"🔔 New lead #{user_id} — {payload.name} ({payload.role})"
+    subject   = f"🔔 New lead — {payload.name} ({payload.role})"
     text_body = (
         f"New lead received.\n\n"
-        f"ID      : {user_id}\n"
+        f"Registration ID : {registration_id}\n"
         f"Name    : {payload.name}\n"
         f"Email   : {payload.email}\n"
         f"Phone   : {payload.phone}\n"
@@ -173,10 +173,11 @@ def _build_admin_email(payload: UserRegistration, user_id: int) -> tuple[str, st
     )
     html_body = f"""
     <div style="font-family:Arial,sans-serif;line-height:1.7;color:#0f172a;max-width:620px;margin:0 auto;padding:24px">
-      <h2 style="margin:0 0 16px;font-size:18px">🔔 New Lead #{user_id}</h2>
+      <h2 style="margin:0 0 16px;font-size:18px">🔔 New Lead — {escape(payload.name)}</h2>
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:20px">
         <table style="border-collapse:collapse;width:100%;font-size:14px">
-          <tr><td style="padding:5px 0;color:#64748b;width:35%">Name</td><td style="padding:5px 0;font-weight:600">{escape(payload.name)}</td></tr>
+          <tr><td style="padding:5px 0;color:#64748b;width:35%">Reg ID</td><td style="padding:5px 0;font-family:monospace;font-size:11px;color:#0ea5e9">{escape(registration_id)}</td></tr>
+          <tr><td style="padding:5px 0;color:#64748b">Name</td><td style="padding:5px 0;font-weight:600">{escape(payload.name)}</td></tr>
           <tr><td style="padding:5px 0;color:#64748b">Email</td><td style="padding:5px 0">{escape(payload.email)}</td></tr>
           <tr><td style="padding:5px 0;color:#64748b">Phone</td><td style="padding:5px 0">{escape(payload.phone)}</td></tr>
           <tr><td style="padding:5px 0;color:#64748b">Target Role</td><td style="padding:5px 0">{escape(payload.role)}</td></tr>
@@ -195,17 +196,17 @@ def _build_admin_email(payload: UserRegistration, user_id: int) -> tuple[str, st
     return subject, text_body, html_body
 
 
-def send_admin_notification(payload: UserRegistration, user_id: int) -> bool:
+def send_admin_notification(payload: UserRegistration, registration_id: str) -> bool:
     if not is_email_enabled():
         return False
 
     admin_email = os.getenv("SUPPORT_EMAIL", "").strip()
     if not admin_email:
-        logger.warning("SUPPORT_EMAIL not set — skipping admin notification for user_id=%s", user_id)
+        logger.warning("SUPPORT_EMAIL not set — skipping admin notification for %s", registration_id)
         return False
 
     cfg = _mail_config()
-    subject, text_body, html_body = _build_admin_email(payload, user_id)
+    subject, text_body, html_body = _build_admin_email(payload, registration_id)
 
     msg = EmailMessage()
     msg["Subject"] = subject
@@ -216,10 +217,116 @@ def send_admin_notification(payload: UserRegistration, user_id: int) -> bool:
 
     try:
         _send_message(msg)
-        logger.info("Admin notification sent for user_id=%s", user_id)
+        logger.info("Admin notification sent for %s", registration_id)
         return True
     except Exception:
-        logger.exception("Failed to send admin notification for user_id=%s", user_id)
+        logger.exception("Failed to send admin notification for %s", registration_id)
+        return False
+
+
+# ── OTP email ─────────────────────────────────────────────────────────────────
+
+def send_otp_email(to_email: str, name: str, otp: str) -> bool:
+    if not is_email_enabled():
+        logger.warning("SMTP not configured — OTP not sent to %s", to_email)
+        return False
+
+    cfg = _mail_config()
+    subject = f"Your OTP for Free ATS Check — GetHired4U: {otp}"
+    text_body = (
+        f"Hi {name},\n\n"
+        f"Your OTP is: {otp}\n\n"
+        "Valid for 10 minutes. Do not share this code with anyone.\n\n"
+        "Regards,\nGetHired4U Team"
+    )
+    html_body = f"""
+    <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:24px">
+      <div style="background:#0f172a;border-radius:12px 12px 0 0;padding:20px 24px">
+        <h1 style="margin:0;font-size:22px;color:#00e676">GetHired4U</h1>
+        <p style="margin:4px 0 0;font-size:13px;color:#94a3b8">Free ATS Resume Check</p>
+      </div>
+      <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;padding:28px">
+        <h2 style="margin:0 0 8px;font-size:18px;color:#0f172a">Your Verification Code</h2>
+        <p>Hi <strong>{escape(name)}</strong>,</p>
+        <p style="color:#475569">Enter the OTP below to start your free ATS resume analysis:</p>
+        <div style="background:#f0fdf4;border:2px solid #00e676;border-radius:14px;text-align:center;padding:28px;margin:22px 0">
+          <div style="font-family:monospace;font-size:44px;font-weight:800;letter-spacing:14px;color:#0f172a;word-spacing:8px">{otp}</div>
+          <p style="margin:10px 0 0;font-size:13px;color:#64748b">⏱ Valid for 10 minutes only</p>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:16px;margin-top:16px">
+          Do not share this code with anyone. If you did not request this, ignore this email.
+        </p>
+        <p style="font-size:14px;color:#475569">Regards,<br/><strong>GetHired4U Team</strong></p>
+      </div>
+    </div>
+    """
+
+    msg = EmailMessage()
+    msg["Subject"]  = subject
+    msg["From"]     = f"{cfg['from_name']} <{cfg['from_email']}>"
+    msg["To"]       = to_email
+    msg.set_content(text_body)
+    msg.add_alternative(html_body, subtype="html")
+
+    try:
+        _send_message(msg)
+        logger.info("OTP email sent to %s", to_email)
+        return True
+    except Exception:
+        logger.exception("Failed to send OTP email to %s", to_email)
+        return False
+
+
+# ── Registration email-verification OTP ───────────────────────────────────────
+
+def send_reg_otp_email(to_email: str, name: str, otp: str) -> bool:
+    if not is_email_enabled():
+        logger.warning("SMTP not configured — reg OTP not sent to %s", to_email)
+        return False
+
+    cfg = _mail_config()
+    subject = f"Verify your email — GetHired4U: {otp}"
+    text_body = (
+        f"Hi {name},\n\n"
+        f"Your email verification code is: {otp}\n\n"
+        "Valid for 10 minutes. Do not share this code.\n\n"
+        "Regards,\nGetHired4U Team"
+    )
+    html_body = f"""
+    <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:24px">
+      <div style="background:#0f172a;border-radius:12px 12px 0 0;padding:20px 24px">
+        <h1 style="margin:0;font-size:22px;color:#ffffff">GetHired4U</h1>
+        <p style="margin:4px 0 0;font-size:13px;color:#94a3b8">Student Registration</p>
+      </div>
+      <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;padding:28px">
+        <h2 style="margin:0 0 8px;font-size:18px;color:#0f172a">Verify Your Email</h2>
+        <p>Hi <strong>{escape(name)}</strong>,</p>
+        <p style="color:#475569">Use the code below to verify your email and complete your registration:</p>
+        <div style="background:#eff6ff;border:2px solid #3b82f6;border-radius:14px;text-align:center;padding:28px;margin:22px 0">
+          <div style="font-family:monospace;font-size:44px;font-weight:800;letter-spacing:14px;color:#1e40af">{otp}</div>
+          <p style="margin:10px 0 0;font-size:13px;color:#64748b">&#9200; Valid for 10 minutes only</p>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:16px;margin-top:16px">
+          If you did not request this, please ignore this email.
+        </p>
+        <p style="font-size:14px;color:#475569">Regards,<br/><strong>GetHired4U Team</strong></p>
+      </div>
+    </div>
+    """
+
+    msg = EmailMessage()
+    msg["Subject"]  = subject
+    msg["From"]     = f"{cfg['from_name']} <{cfg['from_email']}>"
+    msg["To"]       = to_email
+    msg.set_content(text_body)
+    msg.add_alternative(html_body, subtype="html")
+
+    try:
+        _send_message(msg)
+        logger.info("Registration OTP email sent to %s", to_email)
+        return True
+    except Exception:
+        logger.exception("Failed to send registration OTP to %s", to_email)
         return False
 
 

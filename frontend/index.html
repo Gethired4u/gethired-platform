@@ -492,6 +492,21 @@ section{padding:70px 20px}
 .form-group label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:600}
 .form-input{width:100%;background:#080b0f;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;color:var(--white);font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:border-color .2s}
 .form-input:focus{border-color:var(--green)}
+.form-success-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:16px}
+.form-success-overlay.show{display:flex}
+.form-success-card{background:#0d1117;border:1.5px solid var(--green);border-radius:20px;padding:32px 28px;max-width:360px;width:100%;text-align:center;position:relative}
+.form-email-row{display:flex;gap:8px;align-items:stretch}
+.form-email-row .form-input{flex:1;min-width:0}
+.form-verify-btn{flex-shrink:0;background:var(--green);color:#000;border:none;border-radius:var(--radius-sm);padding:0 18px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.form-verify-btn:hover{opacity:.85}
+.form-verify-btn:disabled{opacity:.5;cursor:not-allowed}
+.form-verified-badge{display:none;flex-shrink:0;align-items:center;gap:6px;border:1.5px solid var(--green);border-radius:var(--radius-sm);padding:0 14px;font-size:13px;font-weight:700;color:var(--green);white-space:nowrap}
+.form-otp-row{display:none;margin-top:8px;gap:8px;flex-direction:row}
+.form-otp-input{flex:1;background:#080b0f;border:1.5px solid var(--green);border-radius:var(--radius-sm);padding:12px 16px;color:var(--white);font-family:'Courier New',monospace;font-size:20px;font-weight:700;text-align:center;letter-spacing:10px;outline:none}
+.form-otp-input::placeholder{letter-spacing:2px;font-size:14px;font-weight:400;font-family:'Inter',sans-serif}
+.form-otp-confirm{flex-shrink:0;background:#0f172a;border:1.5px solid var(--green);color:var(--green);border-radius:var(--radius-sm);padding:0 18px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.form-otp-confirm:hover{opacity:.8}
+.form-otp-confirm:disabled{opacity:.4;cursor:not-allowed}
 .form-select{width:100%;background:#080b0f;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;color:var(--white);font-family:'Inter',sans-serif;font-size:15px;outline:none;appearance:none;cursor:pointer}
 .form-select:focus{border-color:var(--green)}
 .upload-box{background:#080b0f;border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:24px;text-align:center;color:var(--muted);cursor:pointer;font-size:14px;transition:border-color .2s}
@@ -561,6 +576,20 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
 @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .6s,transform .6s}
 .reveal.visible{opacity:1;transform:translateY(0)}
+/* ── ATS Gate Modal ── */
+#atsGateModal{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px}
+#atsGateModal.open{display:flex}
+.ats-modal-box{background:#10151c;border:1px solid #1e2a38;border-radius:20px;padding:32px 28px;width:100%;max-width:440px;animation:fadeUp .3s both}
+.ats-modal-box h3{font-size:19px;font-weight:800;margin:0 0 4px;color:var(--white)}
+.ats-modal-box p.sub{font-size:13px;color:var(--muted);margin:0 0 22px}
+.ats-modal-input{width:100%;background:#161d26;border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--white);font-family:'Inter',sans-serif;box-sizing:border-box;margin-bottom:12px;outline:none;transition:border-color .2s}
+.ats-modal-input:focus{border-color:var(--green)}
+.ats-modal-btn{width:100%;padding:13px;border-radius:50px;border:none;font-weight:700;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;background:var(--green);color:#000;transition:opacity .2s}
+.ats-modal-btn:hover{opacity:.88}
+.ats-modal-btn:disabled{opacity:.5;cursor:not-allowed}
+.ats-modal-err{font-size:13px;color:var(--red);margin:0 0 12px;min-height:18px}
+.ats-modal-close{position:absolute;top:16px;right:20px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
+.ats-otp-hint{font-size:12px;color:var(--muted);margin:8px 0 14px;text-align:center}
 </style>
 </head>
 <body>
@@ -1340,9 +1369,20 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
         <label>WhatsApp Number * <span style="color:var(--green);font-size:11px">(We'll message here)</span></label>
         <input type="tel" class="form-input" placeholder="+91 98765 43210" id="fphone">
       </div>
-      <div class="form-group">
-        <label>Email Address *</label>
-        <input type="email" class="form-input" placeholder="you@email.com" id="femail">
+      <div class="form-group" id="femail-group">
+        <label>Email Address * <span id="femail-hint-label" style="color:var(--muted);font-size:11px;font-weight:400">— click Verify to confirm</span></label>
+        <div class="form-email-row">
+          <input type="email" class="form-input" placeholder="you@email.com" id="femail" oninput="onFormEmailChange()">
+          <button type="button" class="form-verify-btn" id="femail-verify-btn" onclick="sendFormOtp()">Verify</button>
+          <div class="form-verified-badge" id="femail-verified-badge">✓ Verified</div>
+        </div>
+        <div class="form-otp-row" id="femail-otp-row">
+          <input type="text" inputmode="numeric" maxlength="6" class="form-otp-input" id="femail-otp-input"
+            placeholder="OTP" oninput="this.value=this.value.replace(/\D/g,'').slice(0,6)">
+          <button type="button" class="form-otp-confirm" id="femail-otp-confirm" onclick="verifyFormOtp()">Confirm</button>
+        </div>
+        <p id="femail-otp-hint" style="font-size:12px;color:var(--muted);margin-top:5px;display:none"></p>
+        <p id="femail-otp-error" style="font-size:12px;color:#f87171;margin-top:5px;display:none"></p>
       </div>
       <div class="form-group">
         <label>Target Job Role *</label>
@@ -1395,6 +1435,25 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
     </a>
   </div>
 </section>
+
+<!-- FORM SUCCESS POPUP -->
+<div id="form-success-popup" class="form-success-overlay" onclick="closeFormSuccessPopup()">
+  <div class="form-success-card" onclick="event.stopPropagation()">
+    <button onclick="closeFormSuccessPopup()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;line-height:1">✕</button>
+    <div style="font-size:54px;margin-bottom:12px">🎉</div>
+    <h3 style="color:var(--white);font-size:22px;font-weight:700;margin:0 0 8px">Congratulations!</h3>
+    <p style="color:var(--muted);font-size:14px;margin:0 0 20px;line-height:1.6">We received your details. Our team will contact you within <strong style="color:var(--white)">24 hours</strong> on WhatsApp.</p>
+    <div style="background:#080b0f;border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:20px">
+      <p style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#64748b;margin:0 0 6px">Registration ID</p>
+      <p id="form-success-reg-id" style="font-family:'Courier New',monospace;font-size:26px;font-weight:800;color:var(--green);letter-spacing:5px;margin:0"></p>
+    </div>
+    <a id="form-success-wa-btn" href="#" target="_blank" rel="noreferrer"
+       style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--green);color:#000;text-decoration:none;font-weight:700;font-size:14px;border-radius:50px;padding:13px 20px;margin-bottom:12px">
+      💬 Chat with our team on WhatsApp
+    </a>
+    <p style="font-size:11px;color:#475569;margin:0">Closes automatically in a moment…</p>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -1701,31 +1760,124 @@ function renderATSResult(data){
   result.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-async function checkATS(){
+// ── ATS Gate: state ──────────────────────────────────────────────────────────
+let _atsSessionToken = null;
+let _atsVerifiedEmail = null;
+
+function checkATS(){
   const fileInput = document.getElementById('atsFile');
-  const jdInput = document.getElementById('atsJobDesc');
-  const expInput = document.getElementById('atsExpLevel');
-  const button = document.getElementById('atsCheckBtn');
+  const jdInput   = document.getElementById('atsJobDesc');
+  const expInput  = document.getElementById('atsExpLevel');
+  if(!fileInput?.files[0]){ alert('Please upload your resume file (PDF, DOCX, or TXT).'); return; }
+  if(!jdInput?.value.trim()){ alert('Please enter the job description or target role.'); return; }
+  if(!expInput?.value){ alert('Please select your experience level.'); return; }
+  openAtsModal();
+}
 
-  const file = fileInput && fileInput.files[0];
-  const jobDesc = jdInput ? jdInput.value.trim() : '';
-  const expLevel = expInput ? expInput.value : '';
+function openAtsModal(){
+  document.getElementById('atsGateModal').classList.add('open');
+  document.getElementById('atsStep1').style.display = 'block';
+  document.getElementById('atsStep2').style.display = 'none';
+  document.getElementById('atsStep1Err').textContent = '';
+  document.getElementById('atsStep2Err').textContent = '';
+  document.getElementById('atsGateOtp').value = '';
+}
 
-  if(!file){ alert('Please upload your resume file (PDF, DOCX, or TXT).'); return; }
-  if(!jobDesc){ alert('Please enter the job description or target role.'); return; }
-  if(!expLevel){ alert('Please select your experience level.'); return; }
+function closeAtsModal(){
+  document.getElementById('atsGateModal').classList.remove('open');
+}
 
-  if(button){ button.disabled = true; button.textContent = '⏳ Analysing with Groq AI...'; }
+function goBackAtsStep1(){
+  document.getElementById('atsStep2').style.display = 'none';
+  document.getElementById('atsStep1').style.display = 'block';
+  document.getElementById('atsStep1Err').textContent = '';
+}
+
+async function sendAtsOtp(){
+  const name   = document.getElementById('atsGateName').value.trim();
+  const mobile = document.getElementById('atsGateMobile').value.trim();
+  const email  = document.getElementById('atsGateEmail').value.trim();
+  const errEl  = document.getElementById('atsStep1Err');
+  const btn    = document.getElementById('atsSendOtpBtn');
+
+  if(!name){ errEl.textContent = 'Please enter your name.'; return; }
+  if(!/^\d{10}$/.test(mobile)){ errEl.textContent = 'Enter a valid 10-digit mobile number.'; return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ errEl.textContent = 'Enter a valid email address.'; return; }
+  errEl.textContent = '';
+
+  btn.disabled = true; btn.textContent = 'Sending OTP…';
+  try{
+    const res = await fetch(`${API_BASE_URL}/ats/request-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, mobile, email, job_role: document.getElementById('atsJobDesc')?.value.trim() || '' })
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.detail || 'Failed to send OTP.');
+    document.getElementById('atsStep1').style.display = 'none';
+    document.getElementById('atsStep2').style.display = 'block';
+    document.getElementById('atsGateOtp').focus();
+  } catch(err){
+    errEl.textContent = err.message;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send OTP to Email →';
+  }
+}
+
+async function verifyAtsOtp(){
+  const email  = document.getElementById('atsGateEmail').value.trim();
+  const otp    = document.getElementById('atsGateOtp').value.trim();
+  const errEl  = document.getElementById('atsStep2Err');
+  const btn    = document.getElementById('atsVerifyBtn');
+
+  if(otp.length !== 6){ errEl.textContent = 'Enter the 6-digit OTP.'; return; }
+  errEl.textContent = '';
+
+  btn.disabled = true; btn.textContent = 'Verifying…';
+  try{
+    const res = await fetch(`${API_BASE_URL}/ats/verify-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp })
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.detail || 'OTP verification failed.');
+    _atsSessionToken  = data.session_token;
+    _atsVerifiedEmail = email;
+    closeAtsModal();
+    await runAtsAnalysis();
+  } catch(err){
+    errEl.textContent = err.message;
+  } finally {
+    btn.disabled = false; btn.textContent = '✅ Verify & Analyse Resume';
+  }
+}
+
+async function runAtsAnalysis(){
+  const fileInput = document.getElementById('atsFile');
+  const jdInput   = document.getElementById('atsJobDesc');
+  const expInput  = document.getElementById('atsExpLevel');
+  const button    = document.getElementById('atsCheckBtn');
+  const name      = document.getElementById('atsGateName')?.value.trim() || '';
+  const mobile    = document.getElementById('atsGateMobile')?.value.trim() || '';
+
+  if(button){ button.disabled = true; button.textContent = '⏳ Analysing with AI…'; }
   try{
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('job_description', jobDesc);
-    formData.append('experience_level', expLevel);
+    formData.append('file', fileInput.files[0]);
+    formData.append('job_description', jdInput.value.trim());
+    formData.append('experience_level', expInput.value);
+    formData.append('email', _atsVerifiedEmail);
+    formData.append('session_token', _atsSessionToken);
+    formData.append('name', name);
+    formData.append('mobile', mobile);
 
     const response = await fetch(`${API_BASE_URL}/analyze-resume`, { method:'POST', body:formData });
     const data = await response.json();
     if(!response.ok) throw new Error(data.detail || 'Resume analysis failed.');
     renderATSResult(data);
+    _atsSessionToken = null;
+    _atsVerifiedEmail = null;
   } catch(err){
     alert(err.message || 'Unable to analyse. Please ensure the backend server is running.');
   } finally {
@@ -1839,12 +1991,98 @@ function claimGift(){
 }
 
 // ===========================
+// FORM EMAIL OTP VERIFICATION
+// ===========================
+let _formEmailVerified = false;
+let _formEmailToken    = '';
+let _formVerifiedEmail = '';
+
+function onFormEmailChange(){
+  const email = document.getElementById('femail').value.trim();
+  if(_formEmailVerified && email !== _formVerifiedEmail){
+    _formEmailVerified = false;
+    _formEmailToken    = '';
+    _formVerifiedEmail = '';
+    const emailEl = document.getElementById('femail');
+    emailEl.disabled = false;
+    emailEl.style.borderColor = '';
+    document.getElementById('femail-verified-badge').style.display = 'none';
+    document.getElementById('femail-verify-btn').style.display  = '';
+    document.getElementById('femail-otp-row').style.display     = 'none';
+    document.getElementById('femail-hint-label').style.display  = '';
+  }
+}
+
+async function sendFormOtp(){
+  const email  = document.getElementById('femail').value.trim();
+  const name   = document.getElementById('fname').value.trim() || 'there';
+  const errEl  = document.getElementById('femail-otp-error');
+  const hintEl = document.getElementById('femail-otp-hint');
+  const btn    = document.getElementById('femail-verify-btn');
+  if(!email || !email.includes('@')){ errEl.textContent='Enter a valid email first.'; errEl.style.display='block'; return; }
+  errEl.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try{
+    await fetch(API_BASE_URL + '/register/send-otp',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email, name})
+    });
+    document.getElementById('femail-otp-row').style.display = 'flex';
+    hintEl.textContent = 'OTP sent to ' + email + '. Check inbox (and spam).';
+    hintEl.style.display = 'block';
+    document.getElementById('femail-otp-input').focus();
+    btn.textContent = 'Resend'; btn.disabled = false;
+  }catch(e){
+    errEl.textContent = 'Could not send OTP. Check your email and try again.';
+    errEl.style.display = 'block';
+    btn.textContent = 'Verify'; btn.disabled = false;
+  }
+}
+
+async function verifyFormOtp(){
+  const email    = document.getElementById('femail').value.trim();
+  const otp      = document.getElementById('femail-otp-input').value.trim();
+  const errEl    = document.getElementById('femail-otp-error');
+  const confirmBtn = document.getElementById('femail-otp-confirm');
+  if(otp.length < 6) return;
+  errEl.style.display = 'none';
+  confirmBtn.disabled = true; confirmBtn.textContent = '…';
+  try{
+    const res  = await fetch(API_BASE_URL + '/register/verify-otp',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email, otp})
+    });
+    if(!res.ok){ const d = await res.json(); throw new Error(d.detail||'Invalid OTP'); }
+    const data = await res.json();
+    _formEmailToken    = data.token;
+    _formEmailVerified = true;
+    _formVerifiedEmail = email;
+    // Update UI to verified state
+    const emailEl = document.getElementById('femail');
+    emailEl.disabled = true; emailEl.style.borderColor = 'var(--green)';
+    document.getElementById('femail-verify-btn').style.display  = 'none';
+    document.getElementById('femail-verified-badge').style.display = 'flex';
+    document.getElementById('femail-otp-row').style.display     = 'none';
+    document.getElementById('femail-otp-hint').style.display    = 'none';
+    document.getElementById('femail-hint-label').style.display  = 'none';
+  }catch(e){
+    errEl.textContent = e.message || 'Wrong OTP. Please try again.';
+    errEl.style.display = 'block';
+    confirmBtn.disabled = false; confirmBtn.textContent = 'Confirm';
+  }
+}
+
+// ===========================
 // FORM SUBMIT
 // ===========================
 function scrollToForm(){
   const form = document.getElementById('form');
   if(form) form.scrollIntoView({behavior:'smooth'});
 }
+function closeFormSuccessPopup(){
+  document.getElementById('form-success-popup').classList.remove('show');
+}
+
 async function handleFormSubmit(){
   const nameEl    = document.getElementById('fname');
   const phoneEl   = document.getElementById('fphone');
@@ -1861,62 +2099,70 @@ async function handleFormSubmit(){
 
   if(!name||!phone||!email||!role||!service){ alert('Please fill all required fields!'); return; }
   if(!email.includes('@')){ alert('Please enter a valid email address!'); return; }
+  if(!_formEmailVerified){ alert('Please verify your email address first — click the Verify button next to Email.'); return; }
 
   const fileInput = document.getElementById('ffile');
   const file      = fileInput && fileInput.files[0];
   const submitBtn = document.querySelector('[onclick="handleFormSubmit()"]');
 
-  // ── Step 1: Upload resume to S3 ─────────────────────────────────────────
-  let resumeLine = 'Not attached';
-  if(file){
-    if(submitBtn){ submitBtn.disabled = true; submitBtn.innerHTML = '⏳ Uploading resume...'; }
-    try{
-      const fd = new FormData();
-      fd.append('file', file);
-      const res = await fetch(API_BASE_URL + '/upload-resume', { method:'POST', body:fd });
-      resumeLine = res.ok ? (await res.json()).url : file.name + ' (upload failed)';
-    } catch(e){ resumeLine = file.name + ' (server offline)'; }
-    if(submitBtn){ submitBtn.disabled = false; submitBtn.innerHTML = '🔒 Submit & Get Started'; }
-  }
+  if(submitBtn){ submitBtn.disabled=true; submitBtn.innerHTML='⏳ Submitting...'; }
 
-  // ── Step 2: Save lead to database ────────────────────────────────────────
-  try {
-    await fetch(API_BASE_URL + '/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+  // ── Step 1: Register immediately — backend sends emails in background ────
+  let registrationId = '';
+  try{
+    const res = await fetch(API_BASE_URL + '/register', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        name:               name,
-        email:              email,
-        phone:              phone,
-        experience:         'Not specified',
-        role:               role,
+        name, email, phone,
+        experience:          'Not specified',
+        role,
         services_interested: service ? [service] : [],
-        lead_source:        'home_page_static',
-        recommended_plan:   service || null,
-        quiz_answers:       {}
+        lead_source:         'home_page_static',
+        recommended_plan:    service || null,
+        quiz_answers:        {},
+        email_token:         _formEmailToken
       })
     });
-  } catch(e) {
-    // Silently continue — WhatsApp flow must not be blocked by API errors
+    if(res.ok){ const d = await res.json(); registrationId = d.registration_id || ''; }
+  }catch(e){ /* show popup regardless */ }
+
+  if(submitBtn){ submitBtn.disabled=false; submitBtn.innerHTML='🔒 Submit & Get Started'; }
+
+  // ── Step 2: Upload resume in background — never blocks the user ──────────
+  if(file){
+    (async()=>{
+      try{
+        const fd = new FormData(); fd.append('file', file);
+        await fetch(API_BASE_URL + '/upload-resume', {method:'POST', body:fd});
+      }catch(e){}
+    })();
   }
 
-  // ── Step 3: Track + open WhatsApp ────────────────────────────────────────
+  // ── Step 3: Show congratulations popup immediately ───────────────────────
   trackEvent('form_submit', {service, has_resume: !!file});
+  document.getElementById('form-success-reg-id').textContent = registrationId;
+  const waMsg = encodeURIComponent([
+    'Hi GetHired4U! I just registered on your website.',
+    '','Name: '+name,'WhatsApp: '+phone,'Email: '+email,'Role: '+role,'Service: '+service
+  ].join('\n'));
+  document.getElementById('form-success-wa-btn').href = 'https://wa.me/919187644559?text='+waMsg;
+  document.getElementById('form-success-popup').classList.add('show');
+  setTimeout(closeFormSuccessPopup, 2500);
 
-  const message = [
-    'Hi GetHired4U, I want to start my job journey.',
-    '',
-    'Name: ' + name,
-    'WhatsApp: ' + phone,
-    'Email: ' + email,
-    'Target role: ' + role,
-    'Selected service: ' + service,
-    'Resume: ' + resumeLine,
-    '',
-    'Please confirm the details and share the next steps.'
-  ].filter(Boolean).join('\n');
-
-  openWhatsAppMessage(message);
+  // ── Step 4: Reset form ───────────────────────────────────────────────────
+  nameEl.value=''; phoneEl.value=''; roleEl.value=''; serviceEl.value='';
+  emailEl.disabled=false; emailEl.value=''; emailEl.style.borderColor='';
+  if(fileInput) fileInput.value='';
+  const uploadLabel = document.querySelector('.upload-text');
+  if(uploadLabel) uploadLabel.innerHTML='📎 Click to upload your resume<br><span style="font-size:12px;color:#444">PDF, DOC or DOCX · Max 5MB</span>';
+  _formEmailVerified=false; _formEmailToken=''; _formVerifiedEmail='';
+  document.getElementById('femail-verified-badge').style.display='none';
+  document.getElementById('femail-verify-btn').style.display='';
+  document.getElementById('femail-hint-label').style.display='';
+  document.getElementById('femail-otp-row').style.display='none';
+  document.getElementById('femail-otp-hint').style.display='none';
+  document.getElementById('femail-otp-error').style.display='none';
 }
 
 // ===========================
@@ -1946,6 +2192,34 @@ document.getElementById('atsFile') && document.getElementById('atsFile').addEven
     background: #f8fafc;
   }
 </style>
+
+<!-- ── ATS Gate Modal ─────────────────────────────────────────────────── -->
+<div id="atsGateModal" role="dialog" aria-modal="true" aria-labelledby="atsModalTitle">
+  <div class="ats-modal-box" style="position:relative">
+    <button class="ats-modal-close" onclick="closeAtsModal()" aria-label="Close">×</button>
+
+    <!-- Step 1: collect details -->
+    <div id="atsStep1">
+      <h3 id="atsModalTitle">🔍 Free ATS Check — Verify Details</h3>
+      <p class="sub">One free check per email. Enter your details to receive an OTP.</p>
+      <input id="atsGateName"   class="ats-modal-input" type="text"  placeholder="Your full name *" autocomplete="name" />
+      <input id="atsGateMobile" class="ats-modal-input" type="tel"   placeholder="WhatsApp number (10 digits) *" autocomplete="tel" maxlength="10" />
+      <input id="atsGateEmail"  class="ats-modal-input" type="email" placeholder="Email address *" autocomplete="email" />
+      <p class="ats-modal-err" id="atsStep1Err"></p>
+      <button class="ats-modal-btn" id="atsSendOtpBtn" onclick="sendAtsOtp()">Send OTP to Email →</button>
+    </div>
+
+    <!-- Step 2: enter OTP -->
+    <div id="atsStep2" style="display:none">
+      <h3>📧 Enter OTP</h3>
+      <p class="sub">Check your email — a 6-digit code was sent.</p>
+      <input id="atsGateOtp" class="ats-modal-input" type="text" placeholder="Enter 6-digit OTP" maxlength="6" inputmode="numeric" style="letter-spacing:8px;font-size:20px;text-align:center" />
+      <p class="ats-otp-hint">Didn't receive it? Check spam or <button onclick="goBackAtsStep1()" style="background:none;border:none;color:var(--green);font-size:12px;cursor:pointer;padding:0">re-enter email</button></p>
+      <p class="ats-modal-err" id="atsStep2Err"></p>
+      <button class="ats-modal-btn" id="atsVerifyBtn" onclick="verifyAtsOtp()">✅ Verify & Analyse Resume</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
 
