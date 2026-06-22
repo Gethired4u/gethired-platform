@@ -136,6 +136,16 @@ section{padding:70px 20px}
 @media(min-width:520px){.nav-cta{display:inline-flex}}
 .nav-wa-btn{display:flex;align-items:center;gap:6px;background:#25d366;color:#000;font-weight:700;font-size:13px;padding:8px 16px;border-radius:50px;border:none;transition:transform .2s}
 .nav-wa-btn:hover{transform:scale(1.04)}
+.nav-register{display:inline-flex}
+.nav-wa-text{display:inline}
+@media(max-width:519px){
+  .logo{font-size:18px}
+  .nav-inner{padding:12px 16px;gap:8px}
+  .nav-right{gap:8px}
+  .nav-register{padding:7px 14px !important;font-size:12px !important}
+  .nav-wa-btn{padding:8px 12px}
+  .nav-wa-text{display:none}
+}
 /* Sticky CTA bar that appears on scroll */
 #sticky-cta-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:600;background:var(--green);color:#000;text-align:center;padding:10px 20px;font-weight:700;font-size:14px;justify-content:center;align-items:center;gap:16px}
 #sticky-cta-bar a{background:#000;color:var(--green);padding:6px 18px;border-radius:50px;font-size:13px;font-weight:700}
@@ -221,7 +231,7 @@ section{padding:70px 20px}
    SERVICES
 ============================ */
 .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:36px}
-.svc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 22px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+.svc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 22px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s;display:flex;flex-direction:column}
 .svc-card:hover{transform:translateY(-4px);border-color:#2a3a4a}
 .svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
 .svc-card.g::before{background:var(--green)}
@@ -252,6 +262,7 @@ section{padding:70px 20px}
 .svc-card.p .feat-list li::before{color:var(--purple)}
 .svc-card.br .feat-list li::before{color:#a1887f}
 .svc-card.o .feat-list li::before{color:var(--orange)}
+.svc-card .del-via{margin-top:auto}
 .svc-btn{width:100%;padding:12px;border-radius:50px;border:none;font-weight:700;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s,transform .15s}
 .svc-btn:hover{opacity:.85;transform:translateY(-1px)}
 .svc-card.g .svc-btn{background:var(--green);color:#000}
@@ -354,7 +365,7 @@ section{padding:70px 20px}
    PACKAGES
 ============================ */
 .packs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:52px}
-.pack{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 22px;transition:transform .2s}
+.pack{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 22px;transition:transform .2s;display:flex;flex-direction:column}
 .pack:hover{transform:translateY(-4px)}
 .pack.featured{border-color:var(--green);background:linear-gradient(150deg,#0e1f14,#080f0b);position:relative}
 .pack-ribbon{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 18px;border-radius:50px;white-space:nowrap}
@@ -379,8 +390,16 @@ section{padding:70px 20px}
 .pack.featured .pack-btn{background:var(--green);color:#000;box-shadow:0 0 22px rgba(0,230,118,.35)}
 .pack.starter .pack-btn{background:var(--blue);color:#000}
 .pack.entry .pack-btn{background:var(--yellow);color:#000}
-.pack-btn{width:100%;padding:14px;border-radius:50px;border:none;font-weight:700;font-size:15px;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s,transform .15s}
+.pack-btn{width:100%;padding:14px;border-radius:50px;border:none;font-weight:700;font-size:15px;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s,transform .15s;margin-top:auto}
 .pack-btn:hover{opacity:.88;transform:translateY(-1px)}
+.pack.accelerator .pnew{color:var(--orange)}
+.pack.accelerator .psave{color:var(--orange)}
+.pack.accelerator .pack-feats li::before{color:var(--orange)}
+.pack.accelerator .pack-btn{background:var(--orange);color:#fff;box-shadow:0 0 18px rgba(255,112,67,.3)}
+.pack.ultimate .pnew{color:var(--purple)}
+.pack.ultimate .psave{color:var(--purple)}
+.pack.ultimate .pack-feats li::before{color:var(--purple)}
+.pack.ultimate .pack-btn{background:var(--purple);color:#000;box-shadow:0 0 18px rgba(206,147,216,.3)}
 
 /* ============================
    HOW IT WORKS
@@ -432,6 +451,8 @@ section{padding:70px 20px}
 .companies-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px;margin-top:32px}
 .company-logo{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 20px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:var(--muted);letter-spacing:.5px;transition:color .2s,border-color .2s}
 .company-logo:hover{color:var(--white);border-color:#2a3a4a}
+.company-more{background:linear-gradient(135deg,rgba(0,230,118,.12),rgba(41,182,246,.08));border:1.5px solid var(--green);border-radius:var(--radius-sm);padding:12px 20px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;color:var(--green);letter-spacing:.5px;animation:more-glow 2.4s ease-in-out infinite}
+@keyframes more-glow{0%,100%{box-shadow:0 0 10px rgba(0,230,118,.2)}50%{box-shadow:0 0 22px rgba(0,230,118,.5)}}
 
 /* ============================
    WHY US
@@ -563,11 +584,11 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
   <div class="nav-inner">
     <div class="logo">GetHired<span>4U</span></div>
     <div class="nav-right">
-      <a href="/register" class="nav-cta" style="padding:9px 20px;font-size:13px;display:inline-flex;align-items:center;gap:6px;background:transparent;border:1.5px solid var(--green);color:var(--green);font-weight:700;border-radius:50px;transition:all .2s;" onmouseover="this.style.background='var(--green)';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='var(--green)'">Register</a>
+      <a href="/register" class="nav-register" style="padding:9px 20px;font-size:13px;align-items:center;gap:6px;background:transparent;border:1.5px solid var(--green);color:var(--green);font-weight:700;border-radius:50px;transition:all .2s;" onmouseover="this.style.background='var(--green)';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='var(--green)'">Register</a>
       <a href="#form" class="btn-primary nav-cta" style="padding:9px 20px;font-size:13px;">Get Started ₹1</a>
       <a href="#form" class="nav-wa-btn js-whatsapp-link" data-wa-context="nav">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.534 5.862L0 24l6.335-1.524A11.947 11.947 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.928 0-3.745-.516-5.307-1.418l-.38-.225-3.76.904.936-3.653-.247-.396A9.935 9.935 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-        WhatsApp
+        <span class="nav-wa-text">WhatsApp</span>
       </a>
     </div>
   </div>
@@ -827,7 +848,7 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
       <div class="svc-card r">
         <div class="svc-name">🎤 Mock Interview</div>
         <div class="svc-tag">Practice with real interviewers</div>
-        <div class="svc-price">₹299</div>
+        <div class="svc-price">₹99</div>
         <ul class="feat-list"><li>Live mock session</li><li>Detailed feedback report</li><li>Communication tips</li><li>Confidence building</li></ul>
         <span class="del-via">⏱️ Session: 60 Minutes</span>
         <button class="svc-btn" onclick="scrollToForm()">Book Mock Interview</button>
@@ -968,7 +989,7 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
         <p><span class="del-via">📅 Duration: 15 Days</span></p>
         <button class="pack-btn" onclick="scrollToForm()">Choose Starter</button>
       </div>
-      <div class="pack">
+      <div class="pack accelerator">
         <h3>🔥 Placement Accelerator</h3>
         <p class="pdesc">30 Days · Full placement push</p>
         <div class="pack-prices"><span class="pnew">₹999</span><span class="pold">₹2499</span></div>
@@ -1002,7 +1023,7 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
         <p><span class="del-via">📅 Duration: 60 Days</span></p>
         <button class="pack-btn" onclick="scrollToForm()">Go Premium</button>
       </div>
-      <div class="pack">
+      <div class="pack ultimate">
         <h3>👑 Ultimate Career Transformation</h3>
         <p class="pdesc">90 Days · Complete career shift</p>
         <div class="pack-prices"><span class="pnew">₹2499</span><span class="pold">₹5999</span></div>
@@ -1142,12 +1163,12 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
       <div class="testi">
         <div class="stars">⭐⭐⭐⭐⭐</div>
         <blockquote>"My Naukri profile was getting zero views. After optimization, recruiters started calling me every 2–3 days. Amazing!"</blockquote>
-        <div class="testi-meta"><div class="t-avatar" style="background:var(--yellow)">A</div><div><div class="t-name">Arjun K.</div><div class="t-role">HR Executive · Mumbai</div></div></div>
+        <div class="testi-meta"><div class="t-avatar" style="background:var(--yellow)">A</div><div><div class="t-name">Arjun K.</div><div class="t-role">HR Executive · Kolkata</div></div></div>
       </div>
       <div class="testi">
         <div class="stars">⭐⭐⭐⭐⭐</div>
         <blockquote>"Was on career gap for 8 months. They helped me update everything and I landed a job within 3 weeks. Highly recommend!"</blockquote>
-        <div class="testi-meta"><div class="t-avatar" style="background:var(--purple)">S</div><div><div class="t-name">Sneha R.</div><div class="t-role">Marketing Manager · Delhi</div></div></div>
+        <div class="testi-meta"><div class="t-avatar" style="background:var(--purple)">S</div><div><div class="t-name">Sneha R.</div><div class="t-role">Marketing Manager · Bangalore</div></div></div>
       </div>
       <div class="testi">
         <div class="stars">⭐⭐⭐⭐⭐</div>
@@ -1184,6 +1205,7 @@ footer{border-top:1px solid var(--border);padding:36px 20px;text-align:center;co
       <div class="company-logo">FLIPKART</div>
       <div class="company-logo">ZOHO</div>
       <div class="company-logo">RAZORPAY</div>
+      <div class="company-more">✦ 100+ More Companies</div>
     </div>
   </div>
 </section>

@@ -575,7 +575,7 @@ function HomePage() {
           <h2 className="mt-3 font-display text-3xl font-bold text-ink sm:text-4xl">Focused modules for students and freshers</h2>
           <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {serviceCards.map((service) => (
-              <article key={service.title} className={`rounded-2xl border bg-white p-5 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-glow ${service.accent}`}>
+              <article key={service.title} className={`flex flex-col rounded-2xl border bg-white p-5 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-glow ${service.accent}`}>
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted">{service.subtitle}</p>
@@ -589,7 +589,7 @@ function HomePage() {
                 <ul className="mt-3 space-y-1.5">
                   {service.features.map((feature) => <CheckItem key={feature}>{feature}</CheckItem>)}
                 </ul>
-                <a href="#form" className={`mt-5 inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition ${service.button}`}>
+                <a href="#form" className={`mt-auto pt-5 inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition ${service.button}`}>
                   {service.cta}
                   <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
