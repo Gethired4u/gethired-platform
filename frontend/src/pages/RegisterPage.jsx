@@ -10,18 +10,18 @@ const packageOptions = [
 ];
 
 const individualServiceOptions = [
-  "ATS Resume Optimization",
-  "Naukri Profile Optimization",
-  "LinkedIn Profile Optimization",
-  "Interview Preparation Kit",
-  "Mock Interview Session",
-  "Job Alerts on WhatsApp",
-  "GitHub & Portfolio Setup",
-  "Placement Readiness Score",
-  "HR Interview Preparation",
-  "Technical Interview Preparation",
-  "Career Roadmap Planning",
-  "Salary Negotiation Guidance",
+  "ATS Resume Optimization (₹199)",
+  "Naukri Profile Optimization (₹149)",
+  "LinkedIn Profile Optimization (₹149)",
+  "Interview Preparation Kit (₹149)",
+  "Mock Interview Session (₹99)",
+  "Job Alerts on WhatsApp (₹99)",
+  "GitHub & Portfolio Setup (₹499)",
+  "Placement Readiness Score (₹99)",
+  "HR Interview Preparation (₹149)",
+  "Technical Interview Preparation (₹149)",
+  "Career Roadmap Planning (₹149)",
+  "Salary Negotiation Guidance (₹149)",
 ];
 
 const WHATSAPP_LINK = "https://wa.me/919187644559";
