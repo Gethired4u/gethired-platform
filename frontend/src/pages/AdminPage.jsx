@@ -724,6 +724,14 @@ function AdminPage() {
                                 className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-50 text-brand-700 hover:bg-brand-100 transition text-sm">
                                 ✏️
                               </button>
+                              {/* Resume */}
+                              {user.resume_url && (
+                                <a href={user.resume_url} target="_blank" rel="noreferrer"
+                                  title="View Resume"
+                                  className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition text-sm">
+                                  📎
+                                </a>
+                              )}
                               {/* Delete */}
                               <button
                                 onClick={() => {
@@ -775,6 +783,15 @@ function AdminPage() {
                                       </span>
                                     ))}
                                   </div>
+                                </div>
+                              )}
+                              {user.resume_url && (
+                                <div className="sm:col-span-2 lg:col-span-4">
+                                  <p className="text-xs font-bold uppercase tracking-wide text-muted mb-2">Resume</p>
+                                  <a href={user.resume_url} target="_blank" rel="noreferrer"
+                                    className="inline-flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700 hover:bg-amber-100 transition">
+                                    📎 View / Download Resume
+                                  </a>
                                 </div>
                               )}
                               {user.notes && (

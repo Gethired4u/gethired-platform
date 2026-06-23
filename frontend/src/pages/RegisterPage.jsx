@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { registerUser, sendRegisterOtp, verifyRegisterOtp } from "../services/api";
 
 const packageOptions = [
@@ -52,7 +52,7 @@ function RegisterPage() {
   // Congratulations popup
   const [showCongrats, setShowCongrats] = useState(false);
   const [registrationId, setRegistrationId] = useState("");
-  const congratsTimer = useRef(null);
+  const [submittedForm, setSubmittedForm] = useState(null);
 
   // Reset OTP state when user changes the email after a verify was started
   useEffect(() => {
@@ -63,14 +63,6 @@ function RegisterPage() {
       setEmailToken("");
     }
   }, [form.email]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Auto-dismiss congratulations popup after 2.5 s
-  useEffect(() => {
-    if (showCongrats) {
-      congratsTimer.current = setTimeout(() => setShowCongrats(false), 2500);
-    }
-    return () => clearTimeout(congratsTimer.current);
-  }, [showCongrats]);
 
   const onFieldChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
 
@@ -137,6 +129,7 @@ function RegisterPage() {
         email_token: emailToken,
       });
       setRegistrationId(response.registration_id);
+      setSubmittedForm({ ...form });
       setShowCongrats(true);
       setForm(initialForm);
       setOtpStep("idle");
@@ -182,14 +175,27 @@ function RegisterPage() {
               <p className="font-mono text-xl font-bold text-brand-600">{registrationId}</p>
             </div>
             <a
-              href={WHATSAPP_LINK}
+              href={`https://wa.me/919187644559?text=${encodeURIComponent(
+                [
+                  "Hi GetHired4U! I just registered on your website. 🎉",
+                  "",
+                  `Name: ${submittedForm?.name || ""}`,
+                  `Phone: ${submittedForm?.phone || ""}`,
+                  `Email: ${submittedForm?.email || ""}`,
+                  `College: ${submittedForm?.college || ""}`,
+                  `Passout Year: ${submittedForm?.graduation_year || ""}`,
+                  `Career Status: ${submittedForm?.experience || ""}`,
+                  `Target Role: ${submittedForm?.role || ""}`,
+                  `Services: ${submittedForm?.services_interested?.join(", ") || ""}`,
+                  `Registration ID: ${registrationId}`,
+                ].join("\n")
+              )}`}
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-700"
             >
-              💬 Chat with our team on WhatsApp
+              💬 Send Details on WhatsApp
             </a>
-            <p className="mt-4 text-xs text-slate-400">Closes automatically in a moment&hellip;</p>
           </div>
         </div>
       )}

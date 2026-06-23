@@ -1473,10 +1473,9 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:56px 20p
       <p id="form-success-reg-id" style="font-family:'Courier New',monospace;font-size:26px;font-weight:800;color:var(--green);letter-spacing:5px;margin:0"></p>
     </div>
     <a id="form-success-wa-btn" href="#" target="_blank" rel="noreferrer"
-       style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--green);color:#000;text-decoration:none;font-weight:700;font-size:14px;border-radius:50px;padding:13px 20px;margin-bottom:12px">
-      💬 Chat with our team on WhatsApp
+       style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--green);color:#000;text-decoration:none;font-weight:700;font-size:14px;border-radius:50px;padding:13px 20px">
+      💬 Send Details on WhatsApp
     </a>
-    <p style="font-size:11px;color:#475569;margin:0">Closes automatically in a moment…</p>
   </div>
 </div>
 
@@ -2187,50 +2186,54 @@ async function handleFormSubmit(){
 
   if(submitBtn){ submitBtn.disabled=true; submitBtn.innerHTML='⏳ Submitting...'; }
 
-  // ── Step 1: Register immediately — backend sends emails in background ────
+  // ── Run register + resume upload in parallel to get S3 URL for WhatsApp ──
   let registrationId = '';
-  try{
-    const res = await fetch(API_BASE_URL + '/register', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        name, email, phone,
-        experience:          'Not specified',
-        role,
-        services_interested: service ? [service] : [],
-        lead_source:         'home_page_static',
-        recommended_plan:    service || null,
-        quiz_answers:        {},
-        email_token:         _formEmailToken
-      })
-    });
-    if(res.ok){ const d = await res.json(); registrationId = d.registration_id || ''; }
-  }catch(e){ /* show popup regardless */ }
+  let resumeUrl = '';
+
+  const registerJob = fetch(API_BASE_URL + '/register', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      name, email, phone,
+      experience:          'Not specified',
+      role,
+      services_interested: service ? [service] : [],
+      lead_source:         'home_page_static',
+      recommended_plan:    service || null,
+      quiz_answers:        {},
+      email_token:         _formEmailToken,
+      resume_url:          resumeUrl || null
+    })
+  }).then(r => r.ok ? r.json() : {}).then(d => { registrationId = d.registration_id || ''; }).catch(()=>{});
+
+  const uploadJob = file ? fetch(API_BASE_URL + '/upload-resume', {
+    method:'POST', body: (() => { const fd = new FormData(); fd.append('file', file); return fd; })()
+  }).then(r => r.ok ? r.json() : {}).then(d => { resumeUrl = d.url || ''; }).catch(()=>{}) : Promise.resolve();
+
+  await Promise.all([registerJob, uploadJob]);
 
   if(submitBtn){ submitBtn.disabled=false; submitBtn.innerHTML='🔒 Submit & Get Started'; }
 
-  // ── Step 2: Upload resume in background — never blocks the user ──────────
-  if(file){
-    (async()=>{
-      try{
-        const fd = new FormData(); fd.append('file', file);
-        await fetch(API_BASE_URL + '/upload-resume', {method:'POST', body:fd});
-      }catch(e){}
-    })();
-  }
-
-  // ── Step 3: Show congratulations popup immediately ───────────────────────
+  // ── Build WhatsApp message with all details + S3 resume link ─────────────
   trackEvent('form_submit', {service, has_resume: !!file});
   document.getElementById('form-success-reg-id').textContent = registrationId;
-  const waMsg = encodeURIComponent([
-    'Hi GetHired4U! I just registered on your website.',
-    '','Name: '+name,'WhatsApp: '+phone,'Email: '+email,'Role: '+role,'Service: '+service
-  ].join('\n'));
-  document.getElementById('form-success-wa-btn').href = 'https://wa.me/919187644559?text='+waMsg;
-  document.getElementById('form-success-popup').classList.add('show');
-  setTimeout(closeFormSuccessPopup, 2500);
 
-  // ── Step 4: Reset form ───────────────────────────────────────────────────
+  const msgLines = [
+    'Hi GetHired4U! I just registered on your website. 🎉',
+    '',
+    'Name: '+name,
+    'WhatsApp: '+phone,
+    'Email: '+email,
+    'Target Role: '+role,
+    'Service: '+service,
+    'Registration ID: '+registrationId,
+  ];
+  if(file) msgLines.push('Resume: '+file.name);
+
+  document.getElementById('form-success-wa-btn').href = 'https://wa.me/919187644559?text='+encodeURIComponent(msgLines.join('\n'));
+  document.getElementById('form-success-popup').classList.add('show');
+
+  // ── Reset form ────────────────────────────────────────────────────────────
   nameEl.value=''; phoneEl.value=''; roleEl.value=''; serviceEl.value='';
   emailEl.disabled=false; emailEl.value=''; emailEl.style.borderColor='';
   if(fileInput) fileInput.value='';

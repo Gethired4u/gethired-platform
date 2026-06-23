@@ -12,6 +12,7 @@ class UserRegistration(BaseModel):
     recommended_plan: str | None = Field(default=None, max_length=160)
     quiz_answers: dict[str, str] = Field(default_factory=dict)
     email_token: str | None = Field(default=None)
+    resume_url: str | None = Field(default=None)
 
 
 class UserRecord(BaseModel):
@@ -27,6 +28,7 @@ class UserRecord(BaseModel):
     recommended_plan: str | None = None
     quiz_answers: dict[str, str] = Field(default_factory=dict)
     created_at: str
+    resume_url: str | None = None
     # CRM fields
     status: str = "new"
     notes: str | None = None

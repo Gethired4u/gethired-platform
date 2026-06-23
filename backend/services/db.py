@@ -37,6 +37,8 @@ def _ensure_user_columns(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE users ADD COLUMN converted_at TEXT")
     if "registration_id" not in existing_columns:
         conn.execute("ALTER TABLE users ADD COLUMN registration_id TEXT NOT NULL DEFAULT ''")
+    if "resume_url" not in existing_columns:
+        conn.execute("ALTER TABLE users ADD COLUMN resume_url TEXT")
 
 
 def _safe_parse_quiz_answers(payload: str | None) -> dict[str, str]:
@@ -187,9 +189,10 @@ def create_user(user: UserRegistration) -> tuple[int, str]:
                     lead_source,
                     recommended_plan,
                     quiz_answers,
-                    registration_id
+                    registration_id,
+                    resume_url
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     user.name,
@@ -202,6 +205,7 @@ def create_user(user: UserRegistration) -> tuple[int, str]:
                     user.recommended_plan,
                     quiz_answers,
                     registration_id,
+                    user.resume_url,
                 ),
             )
             conn.commit()
@@ -224,7 +228,12 @@ def list_users() -> list[UserRecord]:
                 lead_source,
                 recommended_plan,
                 quiz_answers,
-                created_at
+                created_at,
+                resume_url,
+                status,
+                notes,
+                contacted_at,
+                converted_at
             FROM users
             ORDER BY id DESC
             """
@@ -246,6 +255,7 @@ def list_users() -> list[UserRecord]:
                 recommended_plan=row["recommended_plan"] or None,
                 quiz_answers=_safe_parse_quiz_answers(row["quiz_answers"]),
                 created_at=row["created_at"],
+                resume_url=row["resume_url"] if "resume_url" in row.keys() else None,
                 status=row["status"] if "status" in row.keys() else "new",
                 notes=row["notes"] if "notes" in row.keys() else None,
                 contacted_at=row["contacted_at"] if "contacted_at" in row.keys() else None,
