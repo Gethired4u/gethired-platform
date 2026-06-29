@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>My Dashboard — GetHired4U [DEMO]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;1,14..32,400&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ─────────────────────────────────────────────────────────── */
+:root{
+  --bg:#080b0f;--bg2:#0d1117;--card:#10151c;--card2:#161d26;
+  --border:#1e2a38;--green:#00e676;--blue:#60a5fa;--yellow:#fbbf24;
+  --orange:#fb923c;--red:#f87171;--purple:#a78bfa;
+  --white:#eef2f7;--muted:#7a8a9a;--radius:16px;--radius-sm:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+h1,h2,h3,h4{font-family:'Outfit',sans-serif;line-height:1.2}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit}
+
+/* ── Nav ─────────────────────────────────────────────────────────────────── */
+nav{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:14px 24px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.nav-logo{font-family:'Outfit',sans-serif;font-size:20px;font-weight:800}
+.nav-logo span{color:var(--green)}
+.nav-user{display:flex;align-items:center;gap:10px}
+.nav-avatar{width:36px;height:36px;border-radius:50%;background:var(--green);color:#000;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+.nav-name{font-size:14px;font-weight:600;color:var(--white)}
+.nav-id{font-size:11px;color:var(--muted)}
+.nav-logout{background:none;border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 14px;border-radius:8px;transition:all .18s}
+.nav-logout:hover{border-color:var(--red);color:var(--red)}
+
+/* ── DEMO BANNER ─────────────────────────────────────────────────────────── */
+.demo-banner{background:#1a0f05;border-bottom:1px solid #7c3a0a;padding:10px 24px;text-align:center;font-size:13px;color:#fb923c;font-weight:600}
+.demo-banner strong{color:#fed7aa}
+
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+.wrap{max-width:900px;margin:0 auto;padding:32px 20px 80px}
+
+/* ── Greeting ────────────────────────────────────────────────────────────── */
+.greeting{margin-bottom:28px}
+.greeting h1{font-size:clamp(22px,4vw,30px);font-weight:800;margin-bottom:4px}
+.greeting p{color:var(--muted);font-size:14px}
+.greeting strong{color:var(--green)}
+
+/* ── Status Cards ────────────────────────────────────────────────────────── */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:28px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 16px}
+.stat-card .label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+.stat-card .value{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800}
+.stat-card .sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* ── Section card ────────────────────────────────────────────────────────── */
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.section-card h3{font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.section-card h3 .badge{font-size:11px;background:var(--bg2);border:1px solid var(--border);color:var(--muted);padding:2px 10px;border-radius:20px;font-family:'Inter',sans-serif;font-weight:600}
+
+/* ── Request row ─────────────────────────────────────────────────────────── */
+.request-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 20px;margin-bottom:12px;transition:border-color .18s}
+.request-item:last-child{margin-bottom:0}
+.request-item:hover{border-color:#2a3a4a}
+.req-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.req-name{font-weight:700;font-size:15px;color:var(--white);margin-bottom:3px}
+.req-date{font-size:12px;color:var(--muted)}
+.req-id{font-size:11px;color:var(--muted);font-family:monospace;margin-top:2px}
+
+/* ── Status badge ────────────────────────────────────────────────────────── */
+.status-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+.status-badge .dot{width:7px;height:7px;border-radius:50%}
+.s-received  {background:#0a1628;border:1px solid #1e3a5f;color:var(--blue)}     .s-received .dot{background:var(--blue)}
+.s-inprogress{background:#0d1a0a;border:1px solid #1a3d12;color:#4ade80}          .s-inprogress .dot{background:#4ade80;animation:pulse 1.4s infinite}
+.s-review    {background:#1a1505;border:1px solid #3d2e05;color:var(--yellow)}    .s-review .dot{background:var(--yellow)}
+.s-completed {background:#061510;border:1px solid #0d3a1e;color:var(--green)}     .s-completed .dot{background:var(--green)}
+.s-paused    {background:#100a1a;border:1px solid #2a1a3a;color:var(--purple)}    .s-paused .dot{background:var(--purple)}
+@keyframes pulse{0%,100%{opacity:.5;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+
+/* ── Progress timeline ───────────────────────────────────────────────────── */
+.timeline{display:flex;align-items:center;gap:0;margin-top:14px;overflow-x:auto;padding-bottom:4px}
+.tl-step{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:80px}
+.tl-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid var(--border);background:var(--bg);flex-shrink:0;position:relative;z-index:1}
+.tl-dot.done{background:var(--green);border-color:var(--green);color:#000}
+.tl-dot.active{background:var(--card2);border-color:var(--blue);color:var(--blue);box-shadow:0 0 0 4px rgba(96,165,250,.15)}
+.tl-dot.pending{background:var(--bg);border-color:var(--border);color:var(--muted)}
+.tl-label{font-size:10px;font-weight:600;color:var(--muted);text-align:center;white-space:nowrap}
+.tl-label.done{color:var(--green)}
+.tl-label.active{color:var(--blue)}
+.tl-connector{flex:1;height:2px;background:var(--border);min-width:24px;margin-bottom:18px}
+.tl-connector.done{background:var(--green)}
+
+/* ── Admin note ──────────────────────────────────────────────────────────── */
+.admin-note{background:#080e14;border-left:3px solid var(--blue);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px 16px;margin-top:14px}
+.admin-note .note-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:5px}
+.admin-note p{font-size:13px;color:#93c5fd}
+
+/* ── Completed highlight ─────────────────────────────────────────────────── */
+.completed-glow{border-color:#0d3a1e!important}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.empty{text-align:center;padding:48px 20px}
+.empty .icon{font-size:48px;margin-bottom:16px}
+.empty h4{font-size:18px;font-weight:700;margin-bottom:8px}
+.empty p{color:var(--muted);font-size:14px;margin-bottom:20px}
+
+/* ── CTA button ──────────────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:50px;font-weight:700;font-size:14px;padding:11px 22px;transition:all .18s;border:none}
+.btn-green{background:var(--green);color:#000}
+.btn-green:hover{opacity:.88}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--white)}
+.btn-outline:hover{border-color:var(--green);color:var(--green)}
+.btn-wa{background:#25D366;color:#fff}
+.btn-wa:hover{opacity:.9}
+
+/* ── Quick actions ───────────────────────────────────────────────────────── */
+.quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+
+/* ── Info grid ───────────────────────────────────────────────────────────── */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.info-item .il{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+.info-item .iv{font-size:14px;color:var(--white)}
+
+/* ── Login screen ────────────────────────────────────────────────────────── */
+#login-screen{display:none;align-items:center;justify-content:center;min-height:80vh;padding:20px}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;max-width:400px;width:100%;text-align:center}
+.login-card .logo-big{font-family:'Outfit',sans-serif;font-size:28px;font-weight:800;margin-bottom:6px}
+.login-card .logo-big span{color:var(--green)}
+.login-card p{color:var(--muted);font-size:14px;margin-bottom:28px}
+.input-field{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:13px 16px;color:var(--white);font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:border-color .18s;margin-bottom:12px;text-align:center;letter-spacing:2px;text-transform:uppercase}
+.input-field::placeholder{letter-spacing:0;text-transform:none}
+.input-field:focus{border-color:var(--green)}
+.login-btn{width:100%;background:var(--green);color:#000;border:none;border-radius:50px;padding:14px;font-weight:800;font-size:15px;cursor:pointer;transition:opacity .2s;margin-top:4px}
+.login-btn:hover{opacity:.88}
+.login-hint{font-size:12px;color:var(--muted);margin-top:14px}
+.login-hint strong{color:var(--yellow)}
+
+/* ── Dashboard hidden by default ─────────────────────────────────────────── */
+#dashboard{display:none}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media(max-width:600px){
+  .wrap{padding:20px 14px 60px}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .quick-actions{gap:8px}
+  .btn{font-size:13px;padding:10px 16px}
+}
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  🚧 <strong>DEMO MODE</strong> — Preview with sample data. Try email: <strong>ravi@email.com</strong> or <strong>priya@email.com</strong>
+</div>
+
+<nav>
+  <div class="nav-logo">GetHired<span>4U</span></div>
+  <div class="nav-user" id="nav-user-info" style="display:none">
+    <div class="nav-avatar" id="nav-avatar">R</div>
+    <div>
+      <div class="nav-name" id="nav-name">Ravi Kumar</div>
+      <div class="nav-id" id="nav-reg-id">GH9X2K</div>
+    </div>
+    <button class="nav-logout" onclick="logout()">Sign Out</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="logo-big">GetHired<span>4U</span></div>
+    <p>Enter the email you used when you registered — we'll show all your plans and service status.</p>
+    <input type="email" class="input-field" id="email-input"
+      placeholder="your@email.com"
+      style="letter-spacing:0;text-transform:none;text-align:left"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" onclick="doLogin()">View My Dashboard →</button>
+    <p class="login-hint">Use the same email you registered with.<br>
+    No account yet? <strong><a href="/#form" style="color:var(--yellow)">Register here →</a></strong></p>
+    <p id="login-error" style="color:#f87171;font-size:13px;margin-top:12px;display:none">
+      No account found for this email. Please check or <a href="/#form" style="color:var(--yellow)">register first</a>.
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     DASHBOARD (shown after login)
+══════════════════════════════════════════════════════════════════════════ -->
+<div id="dashboard">
+  <div class="wrap">
+
+    <!-- Greeting -->
+    <div class="greeting">
+      <h1>Hey <span id="dash-name" style="color:var(--green)">Ravi</span> 👋</h1>
+      <p>Here's the status of your career placement services with GetHired4U.</p>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="label">Latest Plan ID</div>
+        <div class="value" id="dash-reg-id" style="font-size:18px;color:var(--green);font-family:monospace;letter-spacing:3px">—</div>
+        <div class="sub">Most recent registration</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Total Plans</div>
+        <div class="value" id="dash-service-count" style="color:var(--blue)">0</div>
+        <div class="sub">Active services</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Completed</div>
+        <div class="value" id="dash-completed-count" style="color:var(--green)">1</div>
+        <div class="sub">Services done</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Registered On</div>
+        <div class="value" id="dash-date" style="font-size:16px;color:var(--white)">Jun 20, 2026</div>
+        <div class="sub">Member since</div>
+      </div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="quick-actions">
+      <a href="#" id="wa-support-btn" class="btn btn-wa" target="_blank" rel="noreferrer">
+        💬 WhatsApp Support
+      </a>
+      <a href="/#form" class="btn btn-outline">➕ Add New Service</a>
+    </div>
+
+    <!-- ── My Requests ──────────────────────────────────────────────────── -->
+    <div class="section-card">
+      <h3>My Plans &amp; Services <span class="badge" id="req-count-badge">—</span></h3>
+      <div id="requests-list">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- ── Profile Info ────────────────────────────────────────────────── -->
+    <div class="section-card">
+      <h3>My Profile</h3>
+      <div class="info-grid" id="profile-grid">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────────────────────────────────
+// DEMO DATA — keyed by email (replace with API call in production)
+// ──────────────────────────────────────────────────────────────────────────
+const DEMO_USERS = {
+  'ravi@email.com': {
+    name: 'Ravi Kumar',
+    email: 'ravi@email.com',
+    phone: '+91 98765 43210',
+    role: 'Software Engineer',
+    college: 'JNTU Hyderabad',
+    passout: '2025',
+    registered: 'Jun 10, 2026',
+    plans: [
+      // Each plan = one registration/purchase
+      {
+        regId: 'GH9X2K',
+        date: 'Jun 10, 2026',
+        service: '🚀 Resume Check – ₹1 (1 Day)',
+        status: 'completed',
+        step: 4,
+        adminNote: 'ATS score: 62/100. Full report sent to your email. Top issues: missing keywords, weak summary.',
+      },
+      {
+        regId: 'GH7P3M',
+        date: 'Jun 20, 2026',
+        service: '🔥 Placement Accelerator – ₹999 (30 Days)',
+        status: 'inprogress',
+        step: 2,
+        adminNote: 'ATS resume rewrite done and sent to your email. LinkedIn optimization starts tomorrow. Mock interview scheduled for Jun 26.',
+      },
+      {
+        regId: 'GH4T8R',
+        date: 'Jun 22, 2026',
+        service: '🎤 Mock Interview Session (₹99)',
+        status: 'received',
+        step: 0,
+        adminNote: null,
+      },
+    ]
+  },
+  'priya@email.com': {
+    name: 'Priya Sharma',
+    email: 'priya@email.com',
+    phone: '+91 87654 32109',
+    role: 'Data Analyst',
+    college: 'Delhi University',
+    passout: '2026',
+    registered: 'Jun 18, 2026',
+    plans: [
+      {
+        regId: 'GH2L5V',
+        date: 'Jun 18, 2026',
+        service: '🚀 Resume Check – ₹1 (1 Day)',
+        status: 'completed',
+        step: 4,
+        adminNote: 'ATS score: 74/100. Report sent to priya@email.com. Resume is strong — focus on adding SQL project examples.',
+      },
+      {
+        regId: 'GH8K1W',
+        date: 'Jun 20, 2026',
+        service: '💼 LinkedIn Optimization (₹149)',
+        status: 'review',
+        step: 3,
+        adminNote: 'Profile rewrite complete. Please review the updated headline and About section. Reply on WhatsApp with any changes.',
+      },
+    ]
+  }
+};
+
+// ──────────────────────────────────────────────────────────────────────────
+// STATUS CONFIG
+// ──────────────────────────────────────────────────────────────────────────
+const STATUS = {
+  received:   { label: 'Request Received',  cls: 's-received',   icon: '📥' },
+  inprogress: { label: 'In Progress',       cls: 's-inprogress', icon: '⚙️' },
+  review:     { label: 'Under Review',      cls: 's-review',     icon: '🔍' },
+  completed:  { label: 'Completed',         cls: 's-completed',  icon: '✅' },
+  paused:     { label: 'On Hold',           cls: 's-paused',     icon: '⏸️' },
+};
+
+const STEPS = ['Received', 'Assigned', 'In Progress', 'Review', 'Completed'];
+
+// ──────────────────────────────────────────────────────────────────────────
+// AUTO-LOAD on page open — check localStorage first
+// ──────────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('gh_user_email');
+  if (saved) {
+    const user = DEMO_USERS[saved.toLowerCase()];
+    if (user) {
+      renderDashboard(user);
+      return;
+    }
+  }
+  // No email saved or email not found → show login screen normally
+  document.getElementById('login-screen').style.display = 'flex';
+});
+
+// ──────────────────────────────────────────────────────────────────────────
+// LOGIN (manual fallback — if user types email)
+// ──────────────────────────────────────────────────────────────────────────
+function doLogin() {
+  const email = document.getElementById('email-input').value.trim().toLowerCase();
+  const user  = DEMO_USERS[email];
+  if (!user) {
+    document.getElementById('login-error').style.display = 'block';
+    return;
+  }
+  localStorage.setItem('gh_user_email', email);
+  document.getElementById('login-error').style.display = 'none';
+  renderDashboard(user);
+}
+
+function logout() {
+  localStorage.removeItem('gh_user_email');
+  localStorage.removeItem('gh_user_name');
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('nav-user-info').style.display = 'none';
+  document.getElementById('email-input').value = '';
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// RENDER DASHBOARD
+// ──────────────────────────────────────────────────────────────────────────
+function renderDashboard(user) {
+  // Nav
+  document.getElementById('nav-avatar').textContent = user.name[0].toUpperCase();
+  document.getElementById('nav-name').textContent = user.name;
+  document.getElementById('nav-reg-id').textContent = user.email;
+  document.getElementById('nav-user-info').style.display = 'flex';
+
+  // Greeting
+  document.getElementById('dash-name').textContent = user.name.split(' ')[0];
+  document.getElementById('dash-reg-id').textContent = user.plans[user.plans.length - 1]?.regId || '—';
+  document.getElementById('dash-date').textContent = user.registered;
+
+  // Counts — show all plans
+  const active    = user.plans.filter(p => p.status !== 'completed').length;
+  const completed = user.plans.filter(p => p.status === 'completed').length;
+  document.getElementById('dash-service-count').textContent = active;
+  document.getElementById('dash-completed-count').textContent = completed;
+  document.getElementById('req-count-badge').textContent =
+    user.plans.length + ' plan' + (user.plans.length !== 1 ? 's' : '');
+
+  // WA support link
+  const waMsg = encodeURIComponent(
+    `Hi GetHired4U! I need support.\nName: ${user.name}\nEmail: ${user.email}`
+  );
+  document.getElementById('wa-support-btn').href = `https://wa.me/919187644559?text=${waMsg}`;
+
+  // Plans list — newest first
+  const list = document.getElementById('requests-list');
+  list.innerHTML = '';
+  if (!user.plans.length) {
+    list.innerHTML = `<div class="empty"><div class="icon">📭</div><h4>No plans yet</h4><p>You haven't purchased any service yet.</p><a href="/#form" class="btn btn-green">Get Started</a></div>`;
+  } else {
+    // Sort newest first
+    const sorted = [...user.plans].reverse();
+    sorted.forEach((plan, idx) => {
+      const s = STATUS[plan.status] || STATUS.received;
+      const isCompleted = plan.status === 'completed';
+      const isLatest = idx === 0;
+      list.innerHTML += `
+        <div class="request-item ${isCompleted ? 'completed-glow' : ''}">
+          <div class="req-top">
+            <div>
+              ${isLatest ? '<span style="font-size:10px;font-weight:700;color:var(--green);letter-spacing:.08em;text-transform:uppercase;background:#061510;border:1px solid #0d3a1e;padding:2px 10px;border-radius:20px;margin-bottom:6px;display:inline-block">Latest</span><br>' : ''}
+              <div class="req-name">${plan.service}</div>
+              <div class="req-date">Purchased on ${plan.date}</div>
+              <div class="req-id">Registration ID: <strong style="color:var(--green);font-family:monospace">${plan.regId}</strong></div>
+            </div>
+            <div class="status-badge ${s.cls}">
+              <span class="dot"></span>${s.icon} ${s.label}
+            </div>
+          </div>
+          ${renderTimeline(plan.step)}
+          ${plan.adminNote ? `
+          <div class="admin-note">
+            <div class="note-label">📌 Update from GetHired4U Team</div>
+            <p>${plan.adminNote}</p>
+          </div>` : `
+          <div style="margin-top:12px;font-size:13px;color:var(--muted)">
+            No update yet — our team will reach out within 24 hours.
+          </div>`}
+        </div>`;
+    });
+  }
+
+  // Profile
+  const pg = document.getElementById('profile-grid');
+  pg.innerHTML = `
+    <div class="info-item"><div class="il">Full Name</div><div class="iv">${user.name}</div></div>
+    <div class="info-item"><div class="il">Email</div><div class="iv">${user.email}</div></div>
+    <div class="info-item"><div class="il">WhatsApp</div><div class="iv">${user.phone}</div></div>
+    <div class="info-item"><div class="il">Target Role</div><div class="iv">${user.role}</div></div>
+    <div class="info-item"><div class="il">College / City</div><div class="iv">${user.college}</div></div>
+    <div class="info-item"><div class="il">Passout Year</div><div class="iv">${user.passout}</div></div>`;
+
+  // Show dashboard
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function renderTimeline(currentStep) {
+  let html = '<div class="timeline">';
+  STEPS.forEach((label, i) => {
+    const isDone   = i < currentStep;
+    const isActive = i === currentStep;
+    const cls = isDone ? 'done' : isActive ? 'active' : 'pending';
+    const icon = isDone ? '✓' : isActive ? '●' : String(i + 1);
+    html += `<div class="tl-step">
+      <div class="tl-dot ${cls}">${icon}</div>
+      <div class="tl-label ${cls}">${label}</div>
+    </div>`;
+    if (i < STEPS.length - 1) {
+      html += `<div class="tl-connector ${isDone ? 'done' : ''}"></div>`;
+    }
+  });
+  html += '</div>';
+  return html;
+}
+</script>
+
+</body>
+</html>
