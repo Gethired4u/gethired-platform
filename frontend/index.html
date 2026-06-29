@@ -35,7 +35,7 @@
 
 <!-- ── JSON-LD Structured Data ──────────────────────────────────────────── -->
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Organization","name":"GetHired4U","url":"https://gethired4u.com","logo":"https://gethired4u.com/logo.png","contactPoint":{"@type":"ContactPoint","telephone":"+91-9187644559","contactType":"customer service","areaServed":"IN","availableLanguage":"English"},"sameAs":["https://wa.me/919187644559"]}
+{"@context":"https://schema.org","@type":"Organization","name":"GetHired4U","alternateName":"GetHired4U India","url":"https://gethired4u.com","logo":"https://gethired4u.com/logo.png","description":"India's career placement platform for freshers and job seekers — ATS resume check, LinkedIn optimization, mock interviews, and job alerts.","address":{"@type":"PostalAddress","addressCountry":"IN","addressRegion":"Telangana"},"contactPoint":{"@type":"ContactPoint","telephone":"+91-8639400762","contactType":"customer service","areaServed":"IN","availableLanguage":"English"},"sameAs":["https://gethired4u.com"]}
 </script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebSite","name":"GetHired4U","url":"https://gethired4u.com","description":"Resume check, ATS optimization, and career support for Indian job seekers."}
@@ -635,6 +635,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:56px 20p
     <div class="logo">GetHired<span>4U</span></div>
     <div class="nav-right">
       <a href="/register" class="nav-register" style="padding:9px 20px;font-size:13px;align-items:center;gap:6px;background:transparent;border:1.5px solid var(--green);color:var(--green);font-weight:700;border-radius:50px;transition:all .2s;" onmouseover="this.style.background='var(--green)';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='var(--green)'">Register</a>
+      <a id="nav-my-plans-btn" onclick="goToMyDashboard()" style="padding:9px 18px;font-size:13px;display:inline-flex;align-items:center;gap:6px;background:transparent;border:1.5px solid var(--border);color:var(--muted);font-weight:700;border-radius:50px;transition:all .2s;cursor:pointer" onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">👤 My Plans</a>
       <a href="#form" class="btn-primary nav-cta" style="padding:9px 20px;font-size:13px;">Get Started ₹1</a>
       <a href="#form" class="nav-wa-btn js-whatsapp-link" data-wa-context="nav">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.534 5.862L0 24l6.335-1.524A11.947 11.947 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.928 0-3.745-.516-5.307-1.418l-.38-.225-3.76.904.936-3.653-.247-.396A9.935 9.935 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
@@ -1346,7 +1347,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:56px 20p
     <h2 class="section-title">Tips to Get Hired Faster</h2>
     <div class="divider"></div>
     <div class="blog-grid">
-      <a href="/blog-resume-mistakes.html" class="blog-card" style="display:block;color:inherit">
+      <a href="/blog/resume-mistakes" class="blog-card" style="display:block;color:inherit">
         <div class="blog-thumb" style="background:#0f1a10">📄</div>
         <div class="blog-body">
           <div class="blog-tag">Resume</div>
@@ -1355,7 +1356,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:56px 20p
           <span class="blog-read">Read Article →</span>
         </div>
       </a>
-      <a href="/blog-interview-questions.html" class="blog-card" style="display:block;color:inherit">
+      <a href="/blog/interview-questions" class="blog-card" style="display:block;color:inherit">
         <div class="blog-thumb" style="background:#0a1020">💼</div>
         <div class="blog-body">
           <div class="blog-tag">Interview</div>
@@ -1364,7 +1365,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:56px 20p
           <span class="blog-read">Read Article →</span>
         </div>
       </a>
-      <a href="/blog-linkedin-profile.html" class="blog-card" style="display:block;color:inherit">
+      <a href="/blog/linkedin-profile" class="blog-card" style="display:block;color:inherit">
         <div class="blog-thumb" style="background:#1a100a">🔗</div>
         <div class="blog-body">
           <div class="blog-tag">LinkedIn</div>
@@ -1535,8 +1536,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:56px 20p
   </div>
   <div class="footer-bottom">
     <p>© 2026 GetHired4U · Built for Indian Job Seekers · All Rights Reserved &nbsp;·&nbsp;
-      <a href="/privacy-policy.html">Privacy Policy</a> &nbsp;·&nbsp;
-      <a href="/terms.html">Terms &amp; Conditions</a>
+      <a href="/privacy-policy">Privacy Policy</a> &nbsp;·&nbsp;
+      <a href="/terms">Terms &amp; Conditions</a>
     </p>
   </div>
 </footer>
@@ -2158,6 +2159,9 @@ function scrollToForm(){
   const form = document.getElementById('form');
   if(form) form.scrollIntoView({behavior:'smooth'});
 }
+function goToMyDashboard(){
+  window.location.href = '/dashboard';
+}
 function closeFormSuccessPopup(){
   document.getElementById('form-success-popup').classList.remove('show');
 }
@@ -2213,6 +2217,10 @@ async function handleFormSubmit(){
   await Promise.all([registerJob, uploadJob]);
 
   if(submitBtn){ submitBtn.disabled=false; submitBtn.innerHTML='🔒 Submit & Get Started'; }
+
+  // Save email so "My Plans" nav button auto-loads dashboard next visit
+  localStorage.setItem('gh_user_email', email);
+  localStorage.setItem('gh_user_name', name);
 
   // ── Build WhatsApp message with all details + S3 resume link ─────────────
   trackEvent('form_submit', {service, has_resume: !!file});

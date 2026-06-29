@@ -34,6 +34,9 @@ class UserRecord(BaseModel):
     notes: str | None = None
     contacted_at: str | None = None
     converted_at: str | None = None
+    # Payment fields
+    payment_status: str = "pending"
+    payment_amount: float = 0
 
 
 class RegistrationResponse(BaseModel):

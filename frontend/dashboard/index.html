@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Plans — GetHired4U</title>
+  <meta name="robots" content="noindex" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #273449;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --green: #00e676;
+      --blue: #38bdf8;
+      --yellow: #fbbf24;
+      --red: #f87171;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--green);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--text); }
+    #nav-user { font-size: 13px; color: var(--muted); display: none; gap: 12px; align-items: center; }
+    #nav-user strong { color: var(--text); }
+    #btn-logout {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    #btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+    .page { max-width: 720px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    .auth-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 36px;
+      max-width: 420px;
+      margin: 60px auto 0;
+    }
+    .auth-card h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .auth-card p { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+
+    label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin-bottom: 6px; }
+
+    input[type="email"], input[type="text"] {
+      width: 100%;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 15px;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color .2s;
+      margin-bottom: 20px;
+    }
+    input:focus { border-color: var(--green); }
+
+    .otp-input {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 12px;
+      font-family: monospace;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--green);
+      color: #0f172a;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 14px;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+    }
+    .btn-primary:hover { opacity: .9; }
+    .btn-primary:active { transform: scale(.98); }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+
+    .err-msg {
+      background: rgba(248, 113, 113, .12);
+      border: 1px solid rgba(248, 113, 113, .3);
+      border-radius: 10px;
+      color: var(--red);
+      font-size: 13px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .err-msg.show { display: block; }
+
+    .resend-row { text-align: center; margin-top: 16px; font-size: 13px; color: var(--muted); }
+    #btn-resend {
+      background: none; border: none;
+      color: var(--green); cursor: pointer;
+      font-size: 13px; font-weight: 700;
+      text-decoration: underline; display: none;
+    }
+    #btn-resend.visible { display: inline; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--muted); font-size: 13px; cursor: pointer;
+      margin-bottom: 20px; background: none; border: none; padding: 0;
+    }
+    .back-link:hover { color: var(--text); }
+
+    #dashboard { display: none; }
+
+    .dash-header { margin-bottom: 28px; }
+    .dash-header h1 { font-size: 24px; font-weight: 800; }
+    .dash-header p { color: var(--muted); font-size: 14px; margin-top: 4px; }
+
+    .plan-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .plan-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      border-radius: 4px 0 0 4px;
+    }
+    .plan-card.received::before  { background: var(--blue); }
+    .plan-card.inprogress::before { background: var(--green); }
+    .plan-card.completed::before  { background: #22c55e; }
+    .plan-card.closed::before     { background: var(--border); }
+
+    .plan-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 12px;
+      flex-wrap: wrap; margin-bottom: 16px;
+    }
+    .plan-reg-id { font-size: 11px; color: var(--muted); font-family: monospace; }
+    .plan-date   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .5px; white-space: nowrap;
+    }
+    .badge-received   { background: rgba(56, 189, 248, .12); color: var(--blue);  border: 1px solid rgba(56, 189, 248, .3); }
+    .badge-inprogress { background: rgba(0, 230, 118, .12);  color: var(--green); border: 1px solid rgba(0, 230, 118, .3); }
+    .badge-completed  { background: rgba(34, 197, 94, .15);  color: #22c55e;      border: 1px solid rgba(34, 197, 94, .3); }
+    .badge-closed     { background: rgba(148, 163, 184, .1); color: var(--muted); border: 1px solid var(--border); }
+
+    .pulse-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); animation: pulse 1.4s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .4; transform: scale(.7); }
+    }
+
+    .timeline {
+      display: flex; align-items: center; gap: 0;
+      margin: 16px 0 20px; overflow-x: auto; padding-bottom: 4px;
+    }
+    .tl-step {
+      display: flex; flex-direction: column; align-items: center;
+      min-width: 64px; flex: 1; position: relative;
+    }
+    .tl-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 13px;
+      left: calc(50% + 14px);
+      right: calc(-50% + 14px);
+      height: 2px;
+      background: var(--border);
+    }
+    .tl-step.done:not(:last-child)::after { background: var(--green); }
+    .tl-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--surface2); border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      transition: all .3s; position: relative; z-index: 1;
+    }
+    .tl-step.done   .tl-dot { background: var(--green); border-color: var(--green); color: #0f172a; }
+    .tl-step.active .tl-dot { background: var(--surface2); border-color: var(--green); color: var(--green); box-shadow: 0 0 0 4px rgba(0, 230, 118, .15); }
+    .tl-label { font-size: 10px; color: var(--muted); margin-top: 6px; text-align: center; white-space: nowrap; }
+    .tl-step.done .tl-label, .tl-step.active .tl-label { color: var(--text); }
+
+    .services-section { margin-top: 4px; }
+    .services-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin-bottom: 8px; }
+    .service-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .service-tag { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; font-size: 12px; color: var(--text); }
+
+    .admin-note {
+      margin-top: 14px;
+      background: rgba(251, 191, 36, .08);
+      border: 1px solid rgba(251, 191, 36, .2);
+      border-radius: 10px; padding: 10px 14px;
+      font-size: 13px; color: var(--yellow);
+    }
+    .admin-note strong { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+
+    .payment-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 10px; padding: 6px 12px;
+      font-size: 12px; font-weight: 700; margin-top: 14px;
+    }
+    .payment-received { background: rgba(34, 197, 94, .12); color: #22c55e; border: 1px solid rgba(34, 197, 94, .3); }
+    .payment-pending  { background: rgba(251, 191, 36, .1);  color: var(--yellow); border: 1px solid rgba(251, 191, 36, .25); }
+
+    .latest-badge {
+      background: rgba(0, 230, 118, .15); color: var(--green);
+      border: 1px solid rgba(0, 230, 118, .3); border-radius: 6px;
+      font-size: 10px; font-weight: 800; padding: 2px 8px;
+      text-transform: uppercase; letter-spacing: .5px; margin-left: 8px;
+    }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-state h3 { font-size: 18px; margin-bottom: 8px; color: var(--text); }
+    .empty-state a {
+      display: inline-block; margin-top: 20px;
+      background: var(--green); color: #0f172a;
+      border-radius: 12px; padding: 12px 28px;
+      font-weight: 800; text-decoration: none; font-size: 14px;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">GetHired<span>4U</span></a>
+  <div id="nav-user">
+    <span>👋 <strong id="nav-name"></strong></span>
+    <button id="btn-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<!-- STEP 1: EMAIL -->
+<div id="step-email">
+  <div class="auth-card">
+    <h2>My Plans</h2>
+    <p>Enter the email you used to register. We'll send a one-time code to verify it's you.</p>
+    <div id="err-email" class="err-msg"></div>
+    <label for="inp-email">Registered Email</label>
+    <input type="email" id="inp-email" placeholder="yourname@email.com" autocomplete="email" />
+    <button class="btn-primary" id="btn-send-otp" onclick="sendOtp()">Send OTP</button>
+  </div>
+</div>
+
+<!-- STEP 2: OTP -->
+<div id="step-otp" class="hidden">
+  <div class="auth-card">
+    <button class="back-link" onclick="goBack()">← Back</button>
+    <h2>Enter OTP</h2>
+    <p id="otp-sent-msg">A 6-digit code was sent to your email. Valid for 10 minutes.</p>
+    <div id="err-otp" class="err-msg"></div>
+    <label for="inp-otp">6-Digit Code</label>
+    <input type="text" id="inp-otp" class="otp-input" placeholder="______" maxlength="6" inputmode="numeric" autocomplete="one-time-code" />
+    <button class="btn-primary" id="btn-verify-otp" onclick="verifyOtp()">Verify &amp; Open Dashboard</button>
+    <div class="resend-row">
+      <span id="resend-timer">Resend in <strong id="resend-countdown">60</strong>s</span>
+      <button id="btn-resend" onclick="resendOtp()">Resend OTP</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3: DASHBOARD -->
+<div id="dashboard" class="hidden">
+  <div class="page">
+    <div class="dash-header">
+      <h1>My Plans</h1>
+      <p id="dash-subtitle">Here are all your registered services and their current status.</p>
+    </div>
+    <div id="plans-container"></div>
+  </div>
+</div>
+
+<script>
+  const API_BASE_URL = window.GH_API_BASE_URL ||
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:8000'
+      : '/api');
+
+  let currentEmail = '';
+  let resendInterval = null;
+
+  async function sendOtp() {
+    const email = document.getElementById('inp-email').value.trim();
+    const errEl = document.getElementById('err-email');
+    const btn   = document.getElementById('btn-send-otp');
+
+    errEl.classList.remove('show');
+    if (!email || !email.includes('@')) { showErr(errEl, 'Please enter a valid email address.'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const res  = await fetch(`${API_BASE_URL}/dashboard/send-otp`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showErr(errEl, data.detail || 'Something went wrong. Please try again.');
+        btn.disabled = false; btn.textContent = 'Send OTP'; return;
+      }
+      currentEmail = email;
+      document.getElementById('otp-sent-msg').textContent = `A 6-digit code was sent to ${email}. Valid for 10 minutes.`;
+      document.getElementById('step-email').classList.add('hidden');
+      document.getElementById('step-otp').classList.remove('hidden');
+      document.getElementById('inp-otp').focus();
+      startResendTimer();
+    } catch {
+      showErr(errEl, 'Network error. Please check your connection and try again.');
+      btn.disabled = false; btn.textContent = 'Send OTP';
+    }
+  }
+
+  async function verifyOtp() {
+    const otp   = document.getElementById('inp-otp').value.trim();
+    const errEl = document.getElementById('err-otp');
+    const btn   = document.getElementById('btn-verify-otp');
+
+    errEl.classList.remove('show');
+    if (otp.length !== 6 || !/^\d{6}$/.test(otp)) { showErr(errEl, 'Please enter the 6-digit code from your email.'); return; }
+
+    btn.disabled = true; btn.textContent = 'Verifying…';
+    try {
+      const res  = await fetch(`${API_BASE_URL}/dashboard/verify-otp`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: currentEmail, otp }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showErr(errEl, data.detail || 'Invalid code. Please try again.');
+        btn.disabled = false; btn.textContent = 'Verify & Open Dashboard'; return;
+      }
+      clearInterval(resendInterval);
+      renderDashboard(data.user);
+    } catch {
+      showErr(errEl, 'Network error. Please try again.');
+      btn.disabled = false; btn.textContent = 'Verify & Open Dashboard';
+    }
+  }
+
+  document.getElementById('inp-otp').addEventListener('keydown',   e => { if (e.key === 'Enter') verifyOtp(); });
+  document.getElementById('inp-email').addEventListener('keydown', e => { if (e.key === 'Enter') sendOtp(); });
+
+  function startResendTimer(seconds = 60) {
+    const timerEl   = document.getElementById('resend-timer');
+    const countEl   = document.getElementById('resend-countdown');
+    const resendBtn = document.getElementById('btn-resend');
+    timerEl.style.display = 'inline';
+    resendBtn.classList.remove('visible');
+    countEl.textContent = seconds;
+    clearInterval(resendInterval);
+    resendInterval = setInterval(() => {
+      seconds--;
+      countEl.textContent = seconds;
+      if (seconds <= 0) { clearInterval(resendInterval); timerEl.style.display = 'none'; resendBtn.classList.add('visible'); }
+    }, 1000);
+  }
+
+  async function resendOtp() {
+    document.getElementById('btn-resend').classList.remove('visible');
+    document.getElementById('err-otp').classList.remove('show');
+    try { await fetch(`${API_BASE_URL}/dashboard/send-otp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentEmail }) }); } catch {}
+    startResendTimer();
+  }
+
+  function goBack() {
+    clearInterval(resendInterval);
+    document.getElementById('step-otp').classList.add('hidden');
+    document.getElementById('step-email').classList.remove('hidden');
+    document.getElementById('err-email').classList.remove('show');
+    document.getElementById('btn-send-otp').disabled = false;
+    document.getElementById('btn-send-otp').textContent = 'Send OTP';
+  }
+
+  const STEPS = ['Received', 'Assigned', 'In Progress', 'Review', 'Completed'];
+  const STATUS_STEP  = { received: 0, inprogress: 2, completed: 4, closed: -1 };
+  const STATUS_LABEL = { received: 'Received', inprogress: 'In Progress', completed: 'Completed', closed: 'Closed' };
+
+  function renderDashboard(user) {
+    document.getElementById('step-email').classList.add('hidden');
+    document.getElementById('step-otp').classList.add('hidden');
+    document.getElementById('nav-name').textContent = user.name;
+    document.getElementById('nav-user').style.display = 'flex';
+
+    const container = document.getElementById('plans-container');
+    container.innerHTML = '';
+
+    if (!user.plans || user.plans.length === 0) {
+      container.innerHTML = `<div class="empty-state"><h3>No plans found</h3><p>You haven't registered for any service yet.</p><a href="/">Browse Services</a></div>`;
+    } else {
+      document.getElementById('dash-subtitle').textContent =
+        `Hi ${user.name} 👋  —  ${user.plans.length} registration${user.plans.length > 1 ? 's' : ''} found.`;
+
+      user.plans.forEach((plan, idx) => {
+        const status   = plan.status || 'received';
+        const step     = STATUS_STEP[status] ?? 0;
+        const isLatest = idx === 0;
+        const dateStr  = plan.date ? new Date(plan.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+
+        const tlHtml = STEPS.map((label, i) => {
+          let cls = '';
+          if (status !== 'closed') { if (i < step) cls = 'done'; else if (i === step) cls = 'active'; }
+          return `<div class="tl-step ${cls}"><div class="tl-dot">${i < step ? '✓' : i + 1}</div><div class="tl-label">${label}</div></div>`;
+        }).join('');
+
+        const tagsHtml = (plan.services || []).map(s => `<span class="service-tag">${s}</span>`).join('');
+
+        const isPaid   = plan.payment_status === 'received';
+        const amtStr   = plan.payment_amount > 0 ? ` — ₹${Number(plan.payment_amount).toLocaleString('en-IN')}` : '';
+        const payHtml  = isPaid
+          ? `<div class="payment-badge payment-received">✅ Payment Received${amtStr}</div>`
+          : `<div class="payment-badge payment-pending">⏳ Payment Pending — our team will confirm after receipt${amtStr ? ', expected' + amtStr : ''}</div>`;
+
+        const noteHtml = plan.notes ? `<div class="admin-note"><strong>Update from team</strong>${plan.notes}</div>` : '';
+
+        container.innerHTML += `
+          <div class="plan-card ${status}">
+            <div class="plan-top">
+              <div>
+                <div style="font-weight:800;font-size:15px">
+                  ${plan.recommended_plan || 'Custom Plan'}
+                  ${isLatest ? '<span class="latest-badge">Latest</span>' : ''}
+                </div>
+                <div class="plan-reg-id">ID: ${plan.reg_id || '—'}</div>
+                <div class="plan-date">${dateStr}</div>
+              </div>
+              <span class="status-badge badge-${status}">
+                ${status === 'inprogress' ? '<div class="pulse-dot"></div>' : ''}
+                ${STATUS_LABEL[status] || status}
+              </span>
+            </div>
+            <div class="timeline">${tlHtml}</div>
+            <div class="services-section">
+              <div class="services-label">Services Included</div>
+              <div class="service-tags">${tagsHtml || '<span style="color:var(--muted);font-size:13px">—</span>'}</div>
+            </div>
+            ${payHtml}
+            ${noteHtml}
+          </div>`;
+      });
+    }
+    document.getElementById('dashboard').classList.remove('hidden');
+  }
+
+  function logout() {
+    localStorage.removeItem('gh_user_email');
+    localStorage.removeItem('gh_user_name');
+    document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('nav-user').style.display = 'none';
+    document.getElementById('step-email').classList.remove('hidden');
+    document.getElementById('inp-email').value = '';
+    document.getElementById('inp-otp').value   = '';
+    currentEmail = '';
+  }
+
+  function showErr(el, msg) { el.textContent = msg; el.classList.add('show'); }
+</script>
+</body>
+</html>

@@ -337,10 +337,12 @@ function AdminPage() {
   const [isLoading, setIsLoading]     = useState(false);
   const [error, setError]             = useState("");
 
-  const [editingId, setEditingId]     = useState(null);
-  const [editStatus, setEditStatus]   = useState("");
-  const [editNotes, setEditNotes]     = useState("");
-  const [saving, setSaving]           = useState(false);
+  const [editingId, setEditingId]         = useState(null);
+  const [editStatus, setEditStatus]       = useState("");
+  const [editNotes, setEditNotes]         = useState("");
+  const [editPaymentStatus, setEditPaymentStatus] = useState("pending");
+  const [editPaymentAmount, setEditPaymentAmount] = useState("");
+  const [saving, setSaving]               = useState(false);
 
   const [expandedId, setExpandedId]   = useState(null);
   const [deletingId, setDeletingId]   = useState(null);
@@ -392,14 +394,26 @@ function AdminPage() {
     setEditingId(user.id);
     setEditStatus(user.status || "new");
     setEditNotes(user.notes || "");
+    setEditPaymentStatus(user.payment_status || "pending");
+    // Pre-fill amount: use stored amount if > 0, else calculated price from services
+    const calcPrice = (user.services_interested || []).reduce((s, svc) => s + parseServicePrice(svc), 0);
+    setEditPaymentAmount(String(user.payment_amount > 0 ? user.payment_amount : calcPrice || ""));
   };
 
   const saveEdit = async (userId) => {
     setSaving(true);
     try {
-      await patchLead(token, userId, { status: editStatus, notes: editNotes });
+      const amount = editPaymentAmount !== "" ? parseFloat(editPaymentAmount) : undefined;
+      await patchLead(token, userId, {
+        status: editStatus,
+        notes: editNotes,
+        payment_status: editPaymentStatus,
+        payment_amount: amount,
+      });
       setUsers((prev) => prev.map((u) =>
-        u.id === userId ? { ...u, status: editStatus, notes: editNotes } : u
+        u.id === userId
+          ? { ...u, status: editStatus, notes: editNotes, payment_status: editPaymentStatus, payment_amount: amount ?? u.payment_amount }
+          : u
       ));
       setEditingId(null);
     } catch (err) {
@@ -432,6 +446,14 @@ function AdminPage() {
 
   const totalRevenuePotential = useMemo(() =>
     users.reduce((sum, u) => sum + (u.services_interested || []).reduce((s, svc) => s + parseServicePrice(svc), 0), 0)
+  , [users]);
+
+  const revenueReceived = useMemo(() =>
+    users.filter((u) => u.payment_status === "received").reduce((sum, u) => sum + (u.payment_amount || 0), 0)
+  , [users]);
+
+  const pendingPaymentsCount = useMemo(() =>
+    users.filter((u) => u.payment_status !== "received").length
   , [users]);
 
   const conversionRate = users.length > 0
@@ -514,11 +536,13 @@ function AdminPage() {
       {error && <p className="mt-4 rounded-xl bg-danger-50 px-4 py-3 text-sm text-danger-700">{error}</p>}
 
       {/* Business stats row */}
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard icon="📅" label="Leads Today"         value={todayCount}                          color="text-blue-600"   />
-        <StatCard icon="💰" label="Revenue Potential"   value={`₹${totalRevenuePotential.toLocaleString("en-IN")}`} color="text-green-600" />
-        <StatCard icon="🎯" label="Conversion Rate"     value={`${conversionRate}%`}                color="text-brand-600" sub={`${statusCounts.converted} converted`} />
-        <StatCard icon="📊" label="Avg ATS Score"       value={`${avgATS}/100`}                     color="text-amber-600" sub={`${history.length} checks`} />
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <StatCard icon="📅" label="Leads Today"        value={todayCount}                                                    color="text-blue-600"   />
+        <StatCard icon="💰" label="Revenue Potential"  value={`₹${totalRevenuePotential.toLocaleString("en-IN")}`}           color="text-slate-500"  />
+        <StatCard icon="✅" label="Revenue Received"   value={`₹${revenueReceived.toLocaleString("en-IN")}`}                 color="text-green-600"  sub={`${users.filter(u=>u.payment_status==="received").length} paid`} />
+        <StatCard icon="⏳" label="Pending Payments"   value={pendingPaymentsCount}                                           color="text-amber-600"  sub="not yet paid" />
+        <StatCard icon="🎯" label="Conversion Rate"    value={`${conversionRate}%`}                                          color="text-brand-600"  sub={`${statusCounts.converted} converted`} />
+        <StatCard icon="📊" label="Avg ATS Score"      value={`${avgATS}/100`}                                               color="text-amber-600"  sub={`${history.length} checks`} />
       </div>
 
       {/* Pipeline status row */}
@@ -628,8 +652,12 @@ function AdminPage() {
                         <td className="px-4 py-3">
                           <p className="font-semibold text-ink">{user.name}</p>
                           {price > 0 && (
-                            <p className="text-[10px] font-semibold text-green-600">₹{price.toLocaleString("en-IN")}</p>
+                            <p className="text-[10px] font-semibold text-slate-400">₹{price.toLocaleString("en-IN")} due</p>
                           )}
+                          {user.payment_status === "received"
+                            ? <span className="inline-flex items-center gap-1 rounded-full bg-green-100 border border-green-200 px-2 py-0.5 text-[10px] font-bold text-green-700">✅ Paid{user.payment_amount > 0 ? ` ₹${Number(user.payment_amount).toLocaleString("en-IN")}` : ""}</span>
+                            : <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-bold text-amber-700">⏳ Payment Pending</span>
+                          }
                         </td>
 
                         <td className="px-4 py-3 space-y-0.5">
@@ -671,9 +699,20 @@ function AdminPage() {
                         {/* Notes */}
                         <td className="max-w-[180px] px-4 py-3">
                           {isEditing ? (
-                            <input type="text" value={editNotes} placeholder="Add note…"
-                              onChange={(e) => setEditNotes(e.target.value)}
-                              className="w-full rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none focus:border-brand-400" />
+                            <div className="flex flex-col gap-1.5">
+                              <input type="text" value={editNotes} placeholder="Add note…"
+                                onChange={(e) => setEditNotes(e.target.value)}
+                                className="w-full rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none focus:border-brand-400" />
+                              <select value={editPaymentStatus} onChange={(e) => setEditPaymentStatus(e.target.value)}
+                                className="rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none focus:border-brand-400">
+                                <option value="pending">⏳ Payment Pending</option>
+                                <option value="received">✅ Payment Received</option>
+                              </select>
+                              <input type="number" value={editPaymentAmount} placeholder="Amount ₹"
+                                min="0" step="1"
+                                onChange={(e) => setEditPaymentAmount(e.target.value)}
+                                className="w-full rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none focus:border-brand-400" />
+                            </div>
                           ) : (
                             <span className="block max-w-[170px] truncate text-xs text-slate">
                               {user.notes || <span className="text-muted">—</span>}
@@ -794,6 +833,27 @@ function AdminPage() {
                                   </a>
                                 </div>
                               )}
+                              {/* Payment */}
+                              <div className="sm:col-span-2 lg:col-span-4">
+                                <p className="text-xs font-bold uppercase tracking-wide text-muted mb-2">Payment</p>
+                                <div className="flex flex-wrap items-center gap-3">
+                                  {user.payment_status === "received" ? (
+                                    <span className="inline-flex items-center gap-2 rounded-xl bg-green-100 border border-green-200 px-4 py-2 text-sm font-bold text-green-700">
+                                      ✅ Payment Received
+                                      {user.payment_amount > 0 && <span className="text-green-600">— ₹{Number(user.payment_amount).toLocaleString("en-IN")}</span>}
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-4 py-2 text-sm font-bold text-amber-700">
+                                      ⏳ Payment Pending
+                                      {user.payment_amount > 0 && <span className="text-amber-600">— ₹{Number(user.payment_amount).toLocaleString("en-IN")} expected</span>}
+                                    </span>
+                                  )}
+                                  <button onClick={() => openEdit(user)}
+                                    className="rounded-xl border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate hover:border-brand-400 hover:text-brand-700 transition">
+                                    ✏️ Update Payment
+                                  </button>
+                                </div>
+                              </div>
                               {user.notes && (
                                 <div className="sm:col-span-2 lg:col-span-4">
                                   <p className="text-xs font-bold uppercase tracking-wide text-muted mb-1">Notes</p>

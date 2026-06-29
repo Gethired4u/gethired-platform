@@ -130,6 +130,9 @@ function RegisterPage() {
       });
       setRegistrationId(response.registration_id);
       setSubmittedForm({ ...form });
+      // Save so "My Plans" nav button auto-loads dashboard next visit
+      localStorage.setItem('gh_user_email', form.email);
+      localStorage.setItem('gh_user_name', form.name);
       setShowCongrats(true);
       setForm(initialForm);
       setOtpStep("idle");

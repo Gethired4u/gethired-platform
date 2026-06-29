@@ -330,6 +330,60 @@ def send_reg_otp_email(to_email: str, name: str, otp: str) -> bool:
         return False
 
 
+# ── Dashboard OTP email ───────────────────────────────────────────────────────
+
+def send_dashboard_otp_email(to_email: str, name: str, otp: str) -> bool:
+    if not is_email_enabled():
+        logger.warning("SMTP not configured — dashboard OTP not sent to %s", to_email)
+        return False
+
+    cfg = _mail_config()
+    subject = f"Your OTP to view your plans — GetHired4U: {otp}"
+    text_body = (
+        f"Hi {name},\n\n"
+        f"Your dashboard access code is: {otp}\n\n"
+        "Valid for 10 minutes. Do not share this code with anyone.\n\n"
+        "Use this to check the status of your registered services.\n\n"
+        "Regards,\nGetHired4U Team"
+    )
+    html_body = f"""
+    <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:24px">
+      <div style="background:#0f172a;border-radius:12px 12px 0 0;padding:20px 24px">
+        <h1 style="margin:0;font-size:22px;color:#00e676">GetHired4U</h1>
+        <p style="margin:4px 0 0;font-size:13px;color:#94a3b8">My Plans Dashboard</p>
+      </div>
+      <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;padding:28px">
+        <h2 style="margin:0 0 8px;font-size:18px;color:#0f172a">Dashboard Access Code</h2>
+        <p>Hi <strong>{escape(name)}</strong>,</p>
+        <p style="color:#475569">Enter the OTP below to view your registered plans and their current status:</p>
+        <div style="background:#f0fdf4;border:2px solid #00e676;border-radius:14px;text-align:center;padding:28px;margin:22px 0">
+          <div style="font-family:monospace;font-size:44px;font-weight:800;letter-spacing:14px;color:#0f172a;word-spacing:8px">{otp}</div>
+          <p style="margin:10px 0 0;font-size:13px;color:#64748b">&#9200; Valid for 10 minutes only</p>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:16px;margin-top:16px">
+          Do not share this code with anyone. If you did not request this, ignore this email.
+        </p>
+        <p style="font-size:14px;color:#475569">Regards,<br/><strong>GetHired4U Team</strong></p>
+      </div>
+    </div>
+    """
+
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = f"{cfg['from_name']} <{cfg['from_email']}>"
+    msg["To"] = to_email
+    msg.set_content(text_body)
+    msg.add_alternative(html_body, subtype="html")
+
+    try:
+        _send_message(msg)
+        logger.info("Dashboard OTP email sent to %s", to_email)
+        return True
+    except Exception:
+        logger.exception("Failed to send dashboard OTP email to %s", to_email)
+        return False
+
+
 # ── SMTP connectivity test (call from /admin/test-email) ──────────────────────
 
 def test_smtp_connection() -> dict:

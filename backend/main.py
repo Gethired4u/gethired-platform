@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
-from routes import admin, ats_gate, payment, register, resume, upload
+from routes import admin, ats_gate, dashboard, payment, register, resume, upload
 from services.db import init_db
 
 UPLOAD_DIR = Path("uploads")
@@ -62,6 +62,7 @@ app.include_router(register.router)
 app.include_router(admin.router)
 app.include_router(upload.router)
 app.include_router(payment.router)
+app.include_router(dashboard.router)
 
 # Serve uploaded resume files as static assets so the URL we return is accessible
 app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")

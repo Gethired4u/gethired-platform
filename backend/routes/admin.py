@@ -10,7 +10,7 @@ from fastapi.responses import Response
 from jose import JWTError, jwt
 from pydantic import BaseModel, Field
 
-from services.db import delete_user, get_setting, list_analysis_history, list_ats_leads, list_users, set_setting, update_lead, VALID_STATUSES
+from services.db import delete_user, get_setting, list_analysis_history, list_ats_leads, list_users, set_setting, update_lead, VALID_STATUSES, VALID_PAYMENT_STATUSES
 from services.emailer import test_smtp_connection
 
 logger = logging.getLogger(__name__)
@@ -131,6 +131,8 @@ def export_analysis_history(_auth: dict[str, Any] = Depends(verify_admin_token))
 class UpdateLeadRequest(BaseModel):
     status: Optional[str] = Field(None, description=f"One of: {', '.join(sorted(VALID_STATUSES))}")
     notes: Optional[str] = Field(None, max_length=2000)
+    payment_status: Optional[str] = Field(None, description="pending or received")
+    payment_amount: Optional[float] = Field(None, ge=0)
 
 
 @router.patch("/admin/users/{user_id}")
@@ -144,10 +146,21 @@ def update_lead_status(
             status_code=400,
             detail=f"Invalid status '{payload.status}'. Valid: {', '.join(sorted(VALID_STATUSES))}",
         )
-    updated = update_lead(user_id, payload.status, payload.notes)
+    if payload.payment_status and payload.payment_status not in VALID_PAYMENT_STATUSES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid payment_status '{payload.payment_status}'. Valid: pending, received",
+        )
+    updated = update_lead(
+        user_id,
+        payload.status,
+        payload.notes,
+        payment_status=payload.payment_status,
+        payment_amount=payload.payment_amount,
+    )
     if not updated:
         raise HTTPException(status_code=404, detail=f"User {user_id} not found.")
-    return {"success": True, "user_id": user_id, "status": payload.status, "notes": payload.notes}
+    return {"success": True, "user_id": user_id}
 
 
 @router.delete("/admin/users/{user_id}")

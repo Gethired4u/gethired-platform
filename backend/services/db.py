@@ -39,6 +39,10 @@ def _ensure_user_columns(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE users ADD COLUMN registration_id TEXT NOT NULL DEFAULT ''")
     if "resume_url" not in existing_columns:
         conn.execute("ALTER TABLE users ADD COLUMN resume_url TEXT")
+    if "payment_status" not in existing_columns:
+        conn.execute("ALTER TABLE users ADD COLUMN payment_status TEXT NOT NULL DEFAULT 'pending'")
+    if "payment_amount" not in existing_columns:
+        conn.execute("ALTER TABLE users ADD COLUMN payment_amount REAL NOT NULL DEFAULT 0")
 
 
 def _safe_parse_quiz_answers(payload: str | None) -> dict[str, str]:
@@ -233,7 +237,9 @@ def list_users() -> list[UserRecord]:
                 status,
                 notes,
                 contacted_at,
-                converted_at
+                converted_at,
+                payment_status,
+                payment_amount
             FROM users
             ORDER BY id DESC
             """
@@ -260,23 +266,33 @@ def list_users() -> list[UserRecord]:
                 notes=row["notes"] if "notes" in row.keys() else None,
                 contacted_at=row["contacted_at"] if "contacted_at" in row.keys() else None,
                 converted_at=row["converted_at"] if "converted_at" in row.keys() else None,
+                payment_status=row["payment_status"] if "payment_status" in row.keys() else "pending",
+                payment_amount=row["payment_amount"] if "payment_amount" in row.keys() else 0,
             )
         )
     return users
 
 
 VALID_STATUSES = {"new", "contacted", "converted", "not_interested", "closed"}
+VALID_PAYMENT_STATUSES = {"pending", "received"}
 
 
-def update_lead(user_id: int, status: str | None, notes: str | None) -> bool:
+def update_lead(
+    user_id: int,
+    status: str | None,
+    notes: str | None,
+    payment_status: str | None = None,
+    payment_amount: float | None = None,
+) -> bool:
     from datetime import datetime, timezone
     if status and status not in VALID_STATUSES:
+        return False
+    if payment_status and payment_status not in VALID_PAYMENT_STATUSES:
         return False
 
     now = datetime.now(timezone.utc).isoformat()
     with _lock:
         with _connection() as conn:
-            # Build dynamic SET clause based on what was provided
             updates, params = [], []
             if status:
                 updates.append("status = ?")
@@ -290,6 +306,12 @@ def update_lead(user_id: int, status: str | None, notes: str | None) -> bool:
             if notes is not None:
                 updates.append("notes = ?")
                 params.append(notes)
+            if payment_status is not None:
+                updates.append("payment_status = ?")
+                params.append(payment_status)
+            if payment_amount is not None:
+                updates.append("payment_amount = ?")
+                params.append(payment_amount)
             if not updates:
                 return False
             params.append(user_id)
@@ -507,6 +529,76 @@ def consume_reg_otp_token(email: str, token: str) -> bool:
             conn.execute("DELETE FROM otp_store WHERE email = ?", (key,))
             conn.commit()
             return True
+
+
+# ── Dashboard OTP ─────────────────────────────────────────────────────────────
+# Keys stored with "dash:" prefix to namespace from ATS and reg OTPs.
+
+def save_dashboard_otp(email: str, otp: str, expires_at: str) -> None:
+    key = f"dash:{email.lower()}"
+    with _lock:
+        with _connection() as conn:
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO otp_store (email, otp, expires_at, verified, session_token)
+                VALUES (?, ?, ?, 0, NULL)
+                """,
+                (key, otp, expires_at),
+            )
+            conn.commit()
+
+
+def verify_dashboard_otp(email: str, otp: str) -> str | None:
+    """Returns a session token if OTP is correct and not expired, else None."""
+    import uuid
+    from datetime import datetime, timezone
+
+    key = f"dash:{email.lower()}"
+    with _lock:
+        with _connection() as conn:
+            row = conn.execute(
+                "SELECT otp, expires_at, verified FROM otp_store WHERE email = ?",
+                (key,),
+            ).fetchone()
+            if not row or row["verified"]:
+                return None
+            if row["otp"] != otp:
+                return None
+            try:
+                expires_at = datetime.fromisoformat(row["expires_at"])
+                if expires_at.tzinfo is None:
+                    expires_at = expires_at.replace(tzinfo=timezone.utc)
+            except ValueError:
+                return None
+            if datetime.now(timezone.utc) > expires_at:
+                return None
+
+            token = str(uuid.uuid4())
+            conn.execute(
+                "UPDATE otp_store SET verified = 1, session_token = ? WHERE email = ?",
+                (token, key),
+            )
+            conn.commit()
+            return token
+
+
+def get_registrations_by_email(email: str) -> list[dict]:
+    """Returns all user registrations for a given email address, newest first."""
+    with _connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT
+                id, registration_id, name, email, phone,
+                services_interested, recommended_plan,
+                created_at, status, notes,
+                payment_status, payment_amount
+            FROM users
+            WHERE lower(email) = ?
+            ORDER BY id DESC
+            """,
+            (email.lower(),),
+        ).fetchall()
+    return [dict(row) for row in rows]
 
 
 def list_analysis_history() -> list[dict]:
